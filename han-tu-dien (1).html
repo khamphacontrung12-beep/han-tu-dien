@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hán Tự Điển — Từ điển Trung Việt</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--bg:#faf9f4;--card:#ffffff;--text:#0f172a;--muted:#64748b;--accent:#297a2e;--accent-soft:rgba(41,122,46,.14);--accent2:#d97706;--accent2-soft:rgba(217,119,6,.14);--border:rgba(15,23,42,.08)}
+.han{font-family:"Noto Serif SC",serif}
+.reveal{opacity:0;transform:translateY(16px);animation:fu .55s ease forwards}
+.reveal:nth-child(2){animation-delay:.08s}.reveal:nth-child(3){animation-delay:.16s}.reveal:nth-child(4){animation-delay:.24s}
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+.wcard{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.wcard:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(15,23,42,.08);border-color:var(--accent)}
+.chip{transition:all .15s ease;cursor:pointer;user-select:none}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tabbtn{transition:all .15s ease;cursor:pointer}
+.tabbtn.on{color:var(--accent);border-bottom:3px solid var(--accent);font-weight:700}
+.flipcard{perspective:1200px}
+.flipinner{transition:transform .55s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d;position:relative;width:100%}
+.flipinner.flipped{transform:rotateY(180deg)}
+.flipface{backface-visibility:hidden;-webkit-backface-visibility:hidden;position:absolute;inset:0;width:100%;height:100%}
+.flipback{transform:rotateY(180deg)}
+.opt{transition:all .15s ease;cursor:pointer}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.correct{background:#dcfce7;border-color:#16a34a;color:#14532d}
+.opt.wrong{background:#fee2e2;border-color:#dc2626;color:#7f1d1d}
+.starbtn{cursor:pointer;transition:transform .15s ease}
+.starbtn:hover{transform:scale(1.15)}
+.spkbtn{cursor:pointer;transition:transform .15s ease,background .15s ease}
+.spkbtn:hover{transform:scale(1.08);background:var(--accent-soft)}
+input:focus{outline:none}
+body{margin:0}
+</style>
+</head>
+<body>
+<div style="color:var(--text);font-family:'Baloo 2',sans-serif;background:radial-gradient(900px 400px at 15% -5%,var(--accent-soft),transparent 60%),radial-gradient(700px 400px at 90% 0%,var(--accent2-soft),transparent 55%),var(--bg);min-height:100vh;">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+
+  <!-- HEADER -->
+  <div class="reveal mb-8">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap;">
+      <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#3f9d44);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 6px 18px rgba(41,122,46,.3);">
+        <span class="han" style="font-size:28px;font-weight:900;line-height:1;">字</span>
+      </div>
+      <div>
+        <p style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0;">Chinese · Vietnamese Dictionary</p>
+        <h1 style="font-size:clamp(26px,5vw,40px);font-weight:800;line-height:1.15;letter-spacing:-.01em;margin:4px 0 0;">Hán Tự Điển <span style="background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;">Trung — Việt</span></h1>
+      </div>
+    </div>
+    <p style="color:var(--muted);max-width:620px;font-size:15px;line-height:1.6;margin:8px 0 0;">Tra cứu hán tự, pinyin, nghĩa tiếng Việt và ví dụ. Tích hợp phát âm, flashcard, trắc nghiệm và từ vựng yêu thích.</p>
+    <div class="flex flex-wrap gap-2 mt-4" id="statrow"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="reveal mb-6" style="border-bottom:1px solid var(--border);display:flex;gap:2px;flex-wrap:wrap;">
+    <button class="tabbtn on px-4 py-3 text-sm sm:text-base" data-tab="dict" style="background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);min-height:44px;font-family:inherit;">Tra cứu</button>
+    <button class="tabbtn px-4 py-3 text-sm sm:text-base" data-tab="flash" style="background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);min-height:44px;font-family:inherit;">Flashcard</button>
+    <button class="tabbtn px-4 py-3 text-sm sm:text-base" data-tab="quiz" style="background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);min-height:44px;font-family:inherit;">Trắc nghiệm</button>
+    <button class="tabbtn px-4 py-3 text-sm sm:text-base" data-tab="fav" style="background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);min-height:44px;font-family:inherit;">Yêu thích <span id="favcount" style="background:var(--accent2-soft);color:var(--accent2);border-radius:20px;padding:1px 9px;font-size:12px;font-weight:700;margin-left:4px;">0</span></button>
+  </div>
+
+  <!-- DICT TAB -->
+  <div id="tab-dict" class="tabpanel">
+    <div class="reveal rounded-2xl p-4 sm:p-5 mb-5" style="background:var(--card);border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="display:flex;align-items:center;gap:10px;border:1.5px solid var(--border);border-radius:12px;padding:4px 14px;transition:border-color .15s;" id="searchwrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="Tìm theo hán tự, pinyin (vd: nihao) hoặc nghĩa tiếng Việt..." style="flex:1;border:none;background:transparent;font-size:16px;padding:12px 4px;font-family:inherit;color:var(--text);min-width:0;" autocomplete="off">
+        <button id="clearbtn" style="display:none;background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;min-width:32px;min-height:32px;font-family:inherit;">×</button>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3" id="hskchips">
+        <span class="chip on px-3 py-1.5 rounded-full text-xs font-semibold border" data-hsk="0" style="border-color:var(--border);color:var(--text);background:var(--card);">Tất cả</span>
+        <span class="chip px-3 py-1.5 rounded-full text-xs font-semibold border" data-hsk="1" style="border-color:var(--border);color:var(--text);background:var(--card);">HSK 1</span>
+        <span class="chip px-3 py-1.5 rounded-full text-xs font-semibold border" data-hsk="2" style="border-color:var(--border);color:var(--text);background:var(--card);">HSK 2</span>
+        <span class="chip px-3 py-1.5 rounded-full text-xs font-semibold border" data-hsk="3" style="border-color:var(--border);color:var(--text);background:var(--card);">HSK 3</span>
+        <span class="chip px-3 py-1.5 rounded-full text-xs font-semibold border" data-hsk="4" style="border-color:var(--border);color:var(--text);background:var(--card);">HSK 4</span>
+        <span style="margin-left:auto;color:var(--muted);font-size:13px;align-self:center;" id="resultcount"></span>
+      </div>
+    </div>
+    <div id="results" class="grid gap-4" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));"></div>
+    <div id="noresult" style="display:none;text-align:center;padding:48px 20px;color:var(--muted);">
+      <div style="font-size:42px;margin-bottom:10px;font-weight:700;color:var(--border);">?</div>
+      <p style="font-size:15px;">Không tìm thấy kết quả. Thử tìm bằng pinyin không dấu (vd: <b>xiexie</b>) hoặc nghĩa tiếng Việt.</p>
+    </div>
+  </div>
+
+  <!-- FLASHCARD TAB -->
+  <div id="tab-flash" class="tabpanel" style="display:none;">
+    <div class="reveal max-w-xl mx-auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <span id="fcounter" style="color:var(--muted);font-size:14px;font-weight:600;">1 / 100</span>
+        <div class="flex gap-2">
+          <button id="fshuffle" class="px-3 py-2 rounded-lg text-sm font-semibold" style="background:var(--card);border:1px solid var(--border);color:var(--text);cursor:pointer;min-height:40px;font-family:inherit;">Xáo trộn</button>
+          <button id="fstar" class="px-3 py-2 rounded-lg text-sm font-semibold" style="background:var(--accent2-soft);border:1px solid var(--accent2);color:var(--text);cursor:pointer;min-height:40px;font-family:inherit;">★ Yêu thích</button>
+        </div>
+      </div>
+      <div class="flipcard" style="height:320px;cursor:pointer;" id="fcard">
+        <div class="flipinner rounded-2xl" id="finner" style="height:320px;">
+          <div class="flipface rounded-2xl p-6 flex flex-col items-center justify-center text-center" style="background:var(--card);border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.06);">
+            <p style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Nhấn để lật thẻ</p>
+            <div class="han" id="fhan" style="font-size:64px;font-weight:900;line-height:1.1;color:var(--text);">你好</div>
+            <div id="fpin" style="font-size:22px;color:var(--accent);font-weight:600;margin-top:10px;">nǐ hǎo</div>
+            <button id="fspeak" class="spkbtn mt-4 px-4 py-2 rounded-full" style="background:var(--accent-soft);border:1px solid var(--accent);color:var(--text);font-size:13px;font-weight:600;min-height:40px;font-family:inherit;">Nghe phát âm</button>
+          </div>
+          <div class="flipface flipback rounded-2xl p-6 flex flex-col items-center justify-center text-center" style="background:linear-gradient(135deg,var(--accent),#3f9d44);color:#fff;box-shadow:0 4px 20px rgba(41,122,46,.25);">
+            <p style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.8;margin-bottom:10px;">Nghĩa tiếng Việt</p>
+            <div id="fvi" style="font-size:30px;font-weight:800;line-height:1.3;">xin chào</div>
+            <div id="fpos" style="font-size:13px;opacity:.85;margin-top:6px;">cụm từ</div>
+            <div id="fex" style="margin-top:16px;font-size:14px;line-height:1.6;opacity:.95;max-width:90%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 justify-center mt-6 flex-wrap">
+        <button id="fprev" class="px-6 py-3 rounded-xl font-bold" style="background:var(--card);border:1px solid var(--border);color:var(--text);cursor:pointer;min-height:48px;min-width:60px;font-family:inherit;">← Trước</button>
+        <button id="fflip" class="px-6 py-3 rounded-xl font-bold" style="background:var(--accent-soft);border:1px solid var(--accent);color:var(--text);cursor:pointer;min-height:48px;font-family:inherit;">Lật</button>
+        <button id="fnext" class="px-6 py-3 rounded-xl font-bold" style="background:var(--card);border:1px solid var(--border);color:var(--text);cursor:pointer;min-height:48px;min-width:60px;font-family:inherit;">Sau →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ TAB -->
+  <div id="tab-quiz" class="tabpanel" style="display:none;">
+    <div class="reveal max-w-xl mx-auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <span id="qprogress" style="color:var(--muted);font-size:14px;font-weight:600;">Câu 1 / 10</span>
+        <span id="qscore" style="background:var(--accent-soft);color:var(--accent);padding:3px 12px;border-radius:20px;font-size:13px;font-weight:700;">Điểm: 0</span>
+      </div>
+      <div style="height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden;">
+        <div id="qbar" style="height:100%;width:10%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .3s ease;"></div>
+      </div>
+      <div id="qbody" class="rounded-2xl p-6 sm:p-8 text-center" style="background:var(--card);border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.06);min-height:280px;">
+        <p style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Chọn nghĩa tiếng Việt đúng</p>
+        <div class="han" id="qhan" style="font-size:52px;font-weight:900;line-height:1.15;">你好</div>
+        <div id="qpin" style="font-size:20px;color:var(--accent);font-weight:600;margin-top:8px;margin-bottom:20px;">nǐ hǎo</div>
+        <div id="qopts" class="grid gap-3" style="grid-template-columns:1fr 1fr;"></div>
+        <div id="qfeedback" style="min-height:24px;margin-top:14px;font-weight:700;font-size:15px;"></div>
+      </div>
+      <div id="qdone" style="display:none;text-align:center;margin-top:20px;">
+        <button id="qrestart" class="px-8 py-3 rounded-xl font-bold" style="background:var(--accent);color:#fff;border:none;cursor:pointer;min-height:48px;font-size:16px;font-family:inherit;">Làm lại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAV TAB -->
+  <div id="tab-fav" class="tabpanel" style="display:none;">
+    <div id="favlist" class="grid gap-4" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));"></div>
+    <div id="favempty" style="display:none;text-align:center;padding:48px 20px;color:var(--muted);">
+      <div style="font-size:42px;margin-bottom:10px;font-weight:700;color:var(--border);">☆</div>
+      <p style="font-size:15px;">Chưa có từ yêu thích. Nhấn vào ngôi sao trên mỗi thẻ từ để lưu lại.</p>
+    </div>
+  </div>
+
+  <!-- TONE GUIDE -->
+  <div class="reveal mt-12 rounded-2xl p-5 sm:p-6" style="background:var(--card);border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.05);">
+    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;min-height:44px;user-select:none;" id="tonetoggle">
+      <h2 style="font-size:18px;font-weight:700;margin:0;">Bảng 6 thanh điệu Pinyin</h2>
+      <span id="tonearrow" style="color:var(--accent);font-size:20px;font-weight:700;">−</span>
+    </div>
+    <div id="tonecontent" class="mt-4 grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));">
+      <div class="p-3 rounded-xl" style="background:var(--accent-soft);border-left:3px solid var(--accent);">
+        <div style="font-weight:700;font-size:14px;">Thanh 1 · ngang</div>
+        <div class="han" style="font-size:22px;font-weight:700;">妈 mā</div>
+        <div style="font-size:12px;color:var(--muted);">mẹ</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:var(--accent2-soft);border-left:3px solid var(--accent2);">
+        <div style="font-weight:700;font-size:14px;">Thanh 2 · sắc</div>
+        <div class="han" style="font-size:22px;font-weight:700;">麻 má</div>
+        <div style="font-size:12px;color:var(--muted);">gai / dứa gai</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:rgba(37,99,175,.08);border-left:3px solid #2563ab;">
+        <div style="font-weight:700;font-size:14px;">Thanh 3 · hỏi-ngã</div>
+        <div class="han" style="font-size:22px;font-weight:700;">马 mǎ</div>
+        <div style="font-size:12px;color:var(--muted);">ngựa</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:rgba(186,59,91,.08);border-left:3px solid #ba3b5b;">
+        <div style="font-weight:700;font-size:14px;">Thanh 4 · nặng</div>
+        <div class="han" style="font-size:22px;font-weight:700;">骂 mà</div>
+        <div style="font-size:12px;color:var(--muted);">mắng</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:rgba(100,116,139,.08);border-left:3px solid var(--muted);">
+        <div style="font-weight:700;font-size:14px;">Thanh nhẹ · không dấu</div>
+        <div class="han" style="font-size:22px;font-weight:700;">吗 ma</div>
+        <div style="font-size:12px;color:var(--muted);">trợ từ câu hỏi</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:rgba(13,148,136,.08);border-left:3px solid #0d9488;">
+        <div style="font-weight:700;font-size:14px;">Âm nữ · ü</div>
+        <div class="han" style="font-size:22px;font-weight:700;">女 nǚ</div>
+        <div style="font-size:12px;color:var(--muted);">nữ (gõ v thay ü)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10 pt-6 text-center" style="border-top:1px solid var(--border);">
+    <p style="color:var(--muted);font-size:12px;">Hán Tự Điển · <span id="totalwords">764</span> từ vựng HSK 1–4 · Phát âm qua Web Speech API · Dữ liệu lưu trên trình duyệt</p>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function(){
+  // ===== DATA: [hanzi, pinyin, vietnamese, pos, hsk, ex_zh, ex_pin, ex_vi] =====
+  var D=[
+  ["你好","nǐ hǎo","xin chào","cụm từ",1,"你好吗？","Nǐ hǎo ma?","Bạn khỏe không?"],
+  ["谢谢","xièxie","cảm ơn","động từ",1,"谢谢你。","Xièxie nǐ.","Cảm ơn bạn."],
+  ["再见","zàijiàn","tạm biệt","cụm từ",1,"明天见。","Míngtiān jiàn.","Hẹn gặp lại ngày mai."],
+  ["对不起","duìbuqǐ","xin lỗi","cụm từ",1,"对不起，我迟到了。","Duìbuqǐ, wǒ chídào le.","Xin lỗi, tôi đến muộn."],
+  ["没关系","méiguānxi","không sao","cụm từ",1,"没关系，不要紧。","Méiguānxi, bù yàojǐn.","Không sao, không vấn đề."],
+  ["我","wǒ","tôi","đại từ",1,"我是学生。","Wǒ shì xuésheng.","Tôi là học sinh."],
+  ["你","nǐ","bạn","đại từ",1,"你叫什么名字？","Nǐ jiào shénme míngzi?","Bạn tên gì?"],
+  ["他","tā","anh ấy / ông ấy","đại từ",1,"他是我朋友。","Tā shì wǒ péngyou.","Ấy là bạn tôi."],
+  ["她","tā","cô ấy / bà ấy","đại từ",1,"她是老师。","Tā shì lǎoshī.","Cô ấy là giáo viên."],
+  ["我们","wǒmen","chúng tôi / chúng ta","đại từ",1,"我们是中国人。","Wǒmen shì Zhōngguó rén.","Chúng tôi là người Trung Quốc."],
+  ["你们","nǐmen","các bạn","đại từ",1,"你们好！","Nǐmen hǎo!","Chào các bạn!"],
+  ["他们","tāmen","họ","đại từ",1,"他们在医院。","Tāmen zài yīyuàn.","Họ ở bệnh viện."],
+  ["这","zhè","cái này / đây","đại từ",1,"这是什么？","Zhè shì shénme?","Đây là cái gì?"],
+  ["那","nà","cái đó / đó","đại từ",1,"那是我的书。","Nà shì wǒ de shū.","Đó là sách của tôi."],
+  ["是","shì","là","động từ",1,"我是越南人。","Wǒ shì Yuènán rén.","Tôi là người Việt Nam."],
+  ["不","bù","không","phó từ",1,"我不是老师。","Wǒ bù shì lǎoshī.","Tôi không phải giáo viên."],
+  ["很","hěn","rất","phó từ",1,"我很高兴。","Wǒ hěn gāoxìng.","Tôi rất vui."],
+  ["谁","shéi","ai","đại từ nghi vấn",1,"他是谁？","Tā shì shéi?","Ấy là ai?"],
+  ["什么","shénme","cái gì / gì","đại từ nghi vấn",1,"你吃什么？","Nǐ chī shénme?","Bạn ăn gì?"],
+  ["哪","nǎ","nào","đại từ nghi vấn",1,"哪个是你的？","Nǎge shì nǐ de?","Cái nào là của bạn?"],
+  ["怎么","zěnme","làm sao / thế nào","đại từ nghi vấn",1,"怎么去学校？","Zěnme qù xuéxiào?","Đi trường như thế nào?"],
+  ["几","jǐ","mấy","số từ nghi vấn",1,"你有几个孩子？","Nǐ yǒu jǐge háizi?","Bạn có mấy con?"],
+  ["多少","duōshao","bao nhiêu","đại từ nghi vấn",1,"多少钱？","Duōshao qián?","Bao nhiêu tiền?"],
+  ["一","yī","một","số từ",1,"一个人","Yīge rén","một người"],
+  ["二","èr","hai","số từ",1,"二月","Èryuè","tháng Hai"],
+  ["三","sān","ba","số từ",1,"三点见。","Sān diǎn jiàn.","Gặp lúc ba giờ."],
+  ["四","sì","bốn","số từ",1,"四个人","Sìge rén","bốn người"],
+  ["五","wǔ","năm","số từ",1,"星期五","Xīngqīwǔ","thứ Sáu"],
+  ["十","shí","mười","số từ",1,"十点","Shí diǎn","mười giờ"],
+  ["百","bǎi","trăm","số từ",1,"一百块","Yìbǎi kuài","một trăm đồng"],
+  ["年","nián","năm (thời gian)","danh từ",1,"今年很冷。","Jīnnián hěn lěng.","Năm nay rất lạnh."],
+  ["月","yuè","tháng","danh từ",1,"一月很冷。","Yīyuè hěn lěng.","Tháng Một rất lạnh."],
+  ["今天","jīntiān","hôm nay","danh từ",1,"今天星期一。","Jīntiān xīngqīyī.","Hôm nay thứ Hai."],
+  ["明天","míngtiān","ngày mai","danh từ",1,"明天我去北京。","Míngtiān wǒ qù Běijīng.","Ngày mai tôi đi Bắc Kinh."],
+  ["昨天","zuótiān","hôm qua","danh từ",1,"昨天他没来。","Zuótiān tā méi lái.","Hôm qua ấý không đến."],
+  ["现在","xiànzài","bây giờ","danh từ",1,"现在几点？","Xiànzài jǐ diǎn?","Bây giờ mấy giờ?"],
+  ["时候","shíhou","lúc / thời điểm","danh từ",1,"什么时候？","Shénme shíhou?","Lúc nào?"],
+  ["星期","xīngqī","tuần","danh từ",1,"一个星期有七天。","Yīge xīngqī yǒu qī tiān.","Một tuần có bảy ngày."],
+  ["点","diǎn","giờ (đồng hồ)","danh từ",1,"八点上班。","Bā diǎn shàngbān.","Làm việc lúc tám giờ."],
+  ["人","rén","người","danh từ",1,"中国人","Zhōngguó rén","người Trung Quốc"],
+  ["男","nán","nam / đàn ông","danh từ",1,"男人","Nánrén","đàn ông"],
+  ["女","nǚ","nữ / phụ nữ","danh từ",1,"女人","Nǚrén","phụ nữ"],
+  ["孩子","háizi","đứa trẻ / con cái","danh từ",1,"这是我的孩子。","Zhè shì wǒ de háizi.","Đây là con tôi."],
+  ["爸爸","bàba","bố","danh từ",1,"我爸爸是医生。","Wǒ bàba shì yīshēng.","Bố tôi là bác sĩ."],
+  ["妈妈","māma","mẹ","danh từ",1,"妈妈在家。","Māma zài jiā.","Mẹ ở nhà."],
+  ["朋友","péngyou","bạn bè","danh từ",1,"他是我的好朋友。","Tā shì wǒ de hǎo péngyou.","Ấy là bạn tốt của tôi."],
+  ["老师","lǎoshī","giáo viên","danh từ",1,"王老师很好。","Wáng lǎoshī hěn hǎo.","Thầy Vương rất tốt."],
+  ["学生","xuésheng","học sinh / sinh viên","danh từ",1,"我是大学生。","Wǒ shì dàxuéshēng.","Tôi là sinh viên."],
+  ["医生","yīshēng","bác sĩ","danh từ",1,"他是医生。","Tā shì yīshēng.","Ấy là bác sĩ."],
+  ["工人","gōngrén","công nhân","danh từ",2,"他爸爸是工人。","Tā bàba shì gōngrén.","Bố ấý là công nhân."],
+  ["书","shū","sách","danh từ",1,"这是我的书。","Zhè shì wǒ de shū.","Đây là sách của tôi."],
+  ["笔","bǐ","bút","danh từ",1,"我有一支笔。","Wǒ yǒu yī zhī bǐ.","Tôi có một cây bút."],
+  ["本子","běnzi","vở / sổ","danh từ",2,"本子在桌子上。","Běnzi zài zhuōzi shàng.","Cuốn vở ở trên bàn."],
+  ["电脑","diànnǎo","máy tính","danh từ",2,"我的电脑很贵。","Wǒ de diànnǎo hěn guì.","Máy tính của tôi rất đắt."],
+  ["电话","diànhuà","điện thoại","danh từ",2,"给我打电话。","Gěi wǒ dǎ diànhuà.","Gọi điện cho tôi."],
+  ["手机","shǒujī","điện thoại di động","danh từ",2,"我的手机很漂亮。","Wǒ de shǒujī hěn piàoliang.","Điện thoại của tôi rất đẹp."],
+  ["学校","xuéxiào","trường học","danh từ",1,"学校很大。","Xuéxiào hěn dà.","Trường học rất to."],
+  ["水","shuǐ","nước","danh từ",1,"请给我水。","Qǐng gěi wǒ shuǐ.","Làm ơn cho tôi nước."],
+  ["茶","chá","trà","danh từ",1,"我喜欢喝茶。","Wǒ xǐhuan hē chá.","Tôi thích uống trà."],
+  ["咖啡","kāfēi","cà phê","danh từ",2,"一杯咖啡。","Yī bēi kāfēi.","Một ly cà phê."],
+  ["啤酒","píjiǔ","bia","danh từ",2,"你喝啤酒吗？","Nǐ hē píjiǔ ma?","Bạn uống bia không?"],
+  ["吃","chī","ăn","động từ",1,"你吃饭了吗？","Nǐ chī fàn le ma?","Bạn ăn cơm chưa?"],
+  ["喝","hē","uống","động từ",1,"我喝水。","Wǒ hē shuǐ.","Tôi uống nước."],
+  ["饭","fàn","cơm / bữa ăn","danh từ",1,"我吃饭。","Wǒ chī fàn.","Tôi ăn cơm."],
+  ["菜","cài","món ăn / rau","danh từ",1,"这个菜很好吃。","Zhège cài hěn hǎochī.","Món này rất ngon."],
+  ["肉","ròu","thịt","danh từ",1,"我不吃肉。","Wǒ bù chī ròu.","Tôi không ăn thịt."],
+  ["鸡","jī","gà","danh từ",1,"我喜欢吃鸡。","Wǒ xǐhuan chī jī.","Tôi thích ăn gà."],
+  ["鱼","yú","cá","danh từ",1,"这条鱼很新鲜。","Zhè tiáo yú hěn xīnxiān.","Con cá này rất tươi."],
+  ["苹果","píngguǒ","quả táo","danh từ",2,"苹果很甜。","Píngguǒ hěn tián.","Quả táo rất ngọt."],
+  ["水果","shuǐguǒ","trái cây","danh từ",2,"多吃水果。","Duō chī shuǐguǒ.","Ăn nhiều trái cây."],
+  ["米饭","mǐfàn","cơm trắng","danh từ",2,"一碗米饭。","Yī wǎn mǐfàn.","Một bát cơm."],
+  ["面条","miàntiáo","mì / sợi","danh từ",2,"我喜欢吃面条。","Wǒ xǐhuan chī miàntiáo.","Tôi thích ăn mì."],
+  ["好吃","hǎochī","ngon (mùi vị)","tính từ",1,"这个菜很好吃。","Zhège cài hěn hǎochī.","Món này rất ngon."],
+  ["大","dà","to / lớn","tính từ",1,"这个房子很大。","Zhège fángzi hěn dà.","Ngôi nhà này rất to."],
+  ["小","xiǎo","nhỏ","tính từ",1,"我有一个小房间。","Wǒ yǒu yīge xiǎo fángjiān.","Tôi có phòng nhỏ."],
+  ["多","duō","nhiều","tính từ",1,"人很多。","Rén hěn duō.","Nhiều người lắm."],
+  ["少","shǎo","ít","tính từ",2,"人很少。","Rén hěn shǎo.","Ít người."],
+  ["高","gāo","cao","tính từ",1,"他很高。","Tā hěn gāo.","Ấy rất cao."],
+  ["贵","guì","đắt","tính từ",1,"这个很贵。","Zhège hěn guì.","Cái này rất đắt."],
+  ["便宜","piányi","rẻ","tính từ",2,"那个很便宜。","Nàge hěn piányi.","Cái đó rất rẻ."],
+  ["新","xīn","mới","tính từ",1,"这是新手机。","Zhè shì xīn shǒujī.","Đây là điện thoại mới."],
+  ["旧","jiù","cũ","tính từ",2,"旧书","Jiù shū","sách cũ"],
+  ["漂亮","piàoliang","đẹp (người/vật)","tính từ",1,"她很漂亮。","Tā hěn piàoliang.","Cô ấy rất đẹp."],
+  ["忙","máng","bận","tính từ",1,"我今天很忙。","Wǒ jīntiān hěn máng.","Hôm nay tôi rất bận."],
+  ["累","lèi","mệt","tính từ",1,"我很累。","Wǒ hěn lèi.","Tôi rất mệt."],
+  ["高兴","gāoxìng","vui / mừng","tính từ",1,"我很高兴。","Wǒ hěn gāoxìng.","Tôi rất vui."],
+  ["喜欢","xǐhuan","thích","động từ",1,"我喜欢中国菜。","Wǒ xǐhuan Zhōngguó cài.","Tôi thích món Trung."],
+  ["爱","ài","yêu","động từ",1,"我爱你。","Wǒ ài nǐ.","Tôi yêu bạn."],
+  ["想","xiǎng","nghĩ / muốn","động từ",1,"我想去中国。","Wǒ xiǎng qù Zhōngguó.","Tôi muốn đi Trung Quốc."],
+  ["要","yào","muốn / cần","động từ",1,"我要一杯茶。","Wǒ yào yī bēi chá.","Tôi muốn một ly trà."],
+  ["能","néng","có thể (khả năng)","động từ trợ giúp",2,"你能帮我吗？","Nǐ néng bāng wǒ ma?","Bạn giúp tôi được không?"],
+  ["会","huì","biết (làm gì)","động từ trợ giúp",1,"我会说中文。","Wǒ huì shuō Zhōngwén.","Tôi biết nói tiếng Trung."],
+  ["可以","kěyǐ","được phép / có thể","động từ trợ giúp",2,"可以进来吗？","Kěyǐ jìnlái ma?","Vào được không?"],
+  ["去","qù","đi","động từ",1,"我去学校。","Wǒ qù xuéxiào.","Tôi đi trường."],
+  ["来","lái","đến / lại","động từ",1,"请来我家。","Qǐng lái wǒ jiā.","Mời đến nhà tôi."],
+  ["在","zài","ở / đang (tiếp diễn)","động từ",1,"我在家。","Wǒ zài jiā.","Tôi ở nhà."],
+  ["有","yǒu","có","động từ",1,"我有一个哥哥。","Wǒ yǒu yīge gēge.","Tôi có một anh trai."],
+  ["看","kàn","xem / nhìn","động từ",1,"我看电视。","Wǒ kàn diànshì.","Tôi xem ti vi."],
+  ["听","tīng","nghe","động từ",1,"我听音乐。","Wǒ tīng yīnyuè.","Tôi nghe nhạc."],
+  ["说","shuō","nói","động từ",1,"请说慢一点。","Qǐng shuō màn yīdiǎn.","Nói chậm một chút."],
+  ["读","dú","đọc","động từ",2,"我读书。","Wǒ dú shū.","Tôi đọc sách."],
+  ["写","xiě","viết","động từ",2,"我写汉字。","Wǒ xiě hànzì.","Tôi viết chữ Hán."],
+  ["学","xué","học","động từ",1,"我学中文。","Wǒ xué Zhōngwén.","Tôi học tiếng Trung."],
+  ["工作","gōngzuò","làm việc / công việc","động từ",2,"我在银行工作。","Wǒ zài yínháng gōngzuò.","Tôi làm ở ngân hàng."],
+  ["买","mǎi","mua","động từ",1,"我买一本书。","Wǒ mǎi yī běn shū.","Tôi mua một cuốn sách."],
+  ["开","kāi","mở / bật","động từ",1,"请开门。","Qǐng kāi mén.","Làm ơn mở cửa."],
+  ["关","guān","đóng / tắt","động từ",2,"请关窗。","Qǐng guān chuāng.","Làm ơn đóng cửa sổ."],
+  ["知道","zhīdào","biết (thông tin)","động từ",1,"我不知道。","Wǒ bù zhīdào.","Tôi không biết."],
+  ["认识","rènshi","quen / biết (ai)","động từ",2,"我认识他。","Wǒ rènshi tā.","Tôi quen ấý."],
+  ["钱","qián","tiền","danh từ",1,"我没有钱。","Wǒ méiyǒu qián.","Tôi không có tiền."],
+  ["商店","shāngdiàn","cửa hàng","danh từ",2,"商店在那边。","Shāngdiàn zài nàbiān.","Cửa hàng ở bên kia."],
+  ["饭店","fàndiàn","nhà hàng / khách sạn","danh từ",2,"我们去饭店吃饭。","Wǒmen qù fàndiàn chī fàn.","Chúng tôi đi nhà hàng."],
+  ["医院","yīyuàn","bệnh viện","danh từ",2,"医院在学校旁边。","Yīyuàn zài xuéxiào pángbiān.","Bệnh viện bên cạnh trường."],
+  ["银行","yínháng","ngân hàng","danh từ",2,"银行九点开门。","Yínháng jiǔ diǎn kāi mén.","Ngân hàng mở cửa lúc 9 giờ."],
+  ["公司","gōngsī","công ty","danh từ",2,"他在公司工作。","Tā zài gōngsī gōngzuò.","Ấy làm việc ở công ty."],
+  ["家","jiā","nhà / gia đình","danh từ",1,"我回家。","Wǒ huí jiā.","Tôi về nhà."],
+  ["房间","fángjiān","phòng","danh từ",2,"我的房间很小。","Wǒ de fángjiān hěn xiǎo.","Phòng của tôi rất nhỏ."],
+  ["车","chē","xe (phương tiện)","danh từ",2,"这是谁的车？","Zhè shì shéi de chē?","Đây là xe của ai?"],
+  ["火车","huǒchē","tàu hỏa","danh từ",2,"坐火车去上海。","Zuò huǒchē qù Shànghǎi.","Đi tàu hỏa đến Thượng Hải."],
+  ["飞机","fēijī","máy bay","danh từ",2,"坐飞机去北京。","Zuò fēijī qù Běijīng.","Đi máy bay đến Bắc Kinh."],
+  ["自行车","zìxíngchē","xe đạp","danh từ",2,"我骑自行车上学。","Wǒ qí zìxíngchē shàngxué.","Tôi đi xe đạp đến trường."],
+  ["左","zuǒ","bên trái","danh từ",2,"在左边。","Zài zuǒbiān.","Ở bên trái."],
+  ["右","yòu","bên phải","danh từ",2,"在右边。","Zài yòubiān.","Ở bên phải."],
+  ["上","shàng","trên / lên","danh từ/động từ",1,"书在桌子上。","Shū zài zhuōzi shàng.","Sách ở trên bàn."],
+  ["下","xià","dưới / xuống","danh từ/động từ",1,"猫在桌子下。","Māo zài zhuōzi xià.","Mèo ở dưới bàn."],
+  ["中国","Zhōngguó","Trung Quốc","danh từ riêng",1,"我去中国。","Wǒ qù Zhōngguó.","Tôi đi Trung Quốc."],
+  ["北京","Běijīng","Bắc Kinh","danh từ riêng",2,"北京很大。","Běijīng hěn dà.","Bắc Kinh rất to."],
+  ["上海","Shànghǎi","Thượng Hải","danh từ riêng",2,"上海很漂亮。","Shànghǎi hěn piàoliang.","Thượng Hải rất đẹp."],
+  ["中文","Zhōngwén","tiếng Trung","danh từ",1,"我学中文。","Wǒ xué Zhōngwén.","Tôi học tiếng Trung."],
+  ["名字","míngzi","tên","danh từ",2,"你叫什么名字？","Nǐ jiào shénme míngzi?","Bạn tên gì?"],
+  ["哥哥","gēge","anh trai","danh từ",2,"我有一个哥哥。","Wǒ yǒu yīge gēge.","Tôi có một anh trai."],
+  ["姐姐","jiějie","chị gái","danh từ",2,"姐姐是医生。","Jiějie shì yīshēng.","Chị tôi là bác sĩ."],
+  ["弟弟","dìdi","em trai","danh từ",2,"弟弟很小。","Dìdi hěn xiǎo.","Em trai còn nhỏ."],
+  ["妹妹","mèimei","em gái","danh từ",2,"妹妹在上学。","Mèimei zài shàngxué.","Em gái đang đi học."],
+  ["做","zuò","làm","động từ",1,"你做什么工作？","Nǐ zuò shénme gōngzuò?","Bạn làm công việc gì?"],
+  ["坐","zuò","ngồi","động từ",1,"请坐。","Qǐng zuò.","Mời ngồi."],
+  ["走","zǒu","đi bộ","động từ",1,"我们走路去。","Wǒmen zǒulù qù.","Chúng ta đi bộ đi."],
+  ["睡觉","shuìjiào","ngủ","động từ",1,"我十点睡觉。","Wǒ shí diǎn shuìjiào.","Tôi ngủ lúc mười giờ."],
+  ["起床","qǐchuáng","thức dậy","động từ",2,"我七点起床。","Wǒ qī diǎn qǐchuáng.","Tôi dậy lúc bảy giờ."],
+  ["休息","xiūxi","nghỉ ngơi","động từ",1,"休息一下。","Xiūxi yīxià.","Nghỉ một chút."],
+  ["玩","wán","chơi","động từ",1,"孩子们在玩。","Háizimen zài wán.","Bọn trẻ đang chơi."],
+  ["唱歌","chànggē","hát","động từ",2,"她喜欢唱歌。","Tā xǐhuan chànggē.","Cô ấy thích hát."],
+  ["游泳","yóuyǒng","bơi","động từ",2,"我会游泳。","Wǒ huì yóuyǒng.","Tôi biết bơi."],
+  ["帮助","bāngzhù","giúp đỡ","động từ",2,"谢谢你帮助我。","Xièxie nǐ bāngzhù wǒ.","Cảm ơn bạn đã giúp tôi."],
+  ["给","gěi","cho / đưa","động từ",1,"给你。","Gěi nǐ.","Của bạn đây."],
+  ["用","yòng","dùng / sử dụng","động từ",1,"我用筷子吃饭。","Wǒ yòng kuàizi chī fàn.","Tôi ăn bằng đũa."],
+  ["找","zhǎo","tìm","động từ",1,"我找我的钥匙。","Wǒ zhǎo wǒ de yàoshi.","Tôi tìm chìa khóa."],
+  ["等","děng","đợi","động từ",1,"等我一下。","Děng wǒ yīxià.","Đợi tôi một chút."],
+  ["穿","chuān","mặc (quần áo)","động từ",2,"今天穿什么衣服？","Jīntiān chuān shénme yīfu?","Hôm nay mặc gì?"],
+  ["住","zhù","ở (sinh sống)","động từ",1,"你住哪儿？","Nǐ zhù nǎr?","Bạn ở đâu?"],
+  ["回","huí","quay về","động từ",1,"我回家。","Wǒ huí jiā.","Tôi về nhà."],
+  ["到","dào","đến / tới","động từ",1,"到了。","Dào le.","Đến nơi rồi."],
+  ["进","jìn","vào","động từ",2,"请进。","Qǐng jìn.","Mời vào."],
+  ["出","chū","ra","động từ",2,"出去。","Chūqù.","Ra ngoài."],
+  ["早上","zǎoshang","buổi sáng","danh từ",1,"早上好。","Zǎoshang hǎo.","Chào buổi sáng."],
+  ["上午","shàngwǔ","buổi sáng (trước trưa)","danh từ",2,"上午有课。","Shàngwǔ yǒu kè.","Buổi sáng có học."],
+  ["下午","xiàwǔ","buổi chiều","danh từ",1,"下午见。","Xiàwǔ jiàn.","Hẹn gặp buổi chiều."],
+  ["晚上","wǎnshang","buổi tối","danh từ",1,"晚上好。","Wǎnshang hǎo.","Chào buổi tối."],
+  ["中午","zhōngwǔ","buổi trưa","danh từ",2,"中午休息。","Zhōngwǔ xiūxi.","Buổi trưa nghỉ ngơi."],
+  ["周末","zhōumò","cuối tuần","danh từ",2,"周末你做什么？","Zhōumò nǐ zuò shénme?","Cuối tuần bạn làm gì?"],
+  ["分钟","fēnzhōng","phút","danh từ",2,"等十分钟。","Děng shí fēnzhōng.","Đợi mười phút."],
+  ["小时","xiǎoshí","giờ (đơn vị)","danh từ",2,"两个小时。","Liǎngge xiǎoshí.","Hai tiếng đồng hồ."],
+  ["时间","shíjiān","thời gian","danh từ",1,"没有时间。","Méiyǒu shíjiān.","Không có thời gian."],
+  ["天气","tiānqì","thời tiết","danh từ",1,"今天天气很好。","Jīntiān tiānqì hěn hǎo.","Hôm nay thời tiết tốt."],
+  ["冷","lěng","lạnh","tính từ",1,"今天很冷。","Jīntiān hěn lěng.","Hôm nay rất lạnh."],
+  ["热","rè","nóng","tính từ",1,"夏天很热。","Xiàtiān hěn rè.","Mùa hè rất nóng."],
+  ["下雨","xiàyǔ","trời mưa","động từ",1,"今天下雨。","Jīntiān xiàyǔ.","Hôm nay trời mưa."],
+  ["太阳","tàiyáng","mặt trời","danh từ",2,"太阳很大。","Tàiyáng hěn dà.","Mặt trời rất to."],
+  ["春天","chūntiān","mùa xuân","danh từ",2,"春天很暖和。","Chūntiān hěn nuǎnhuo.","Mùa xuân rất ấm."],
+  ["衣服","yīfu","quần áo","danh từ",1,"买新衣服。","Mǎi xīn yīfu.","Mua quần áo mới."],
+  ["鞋子","xiézi","giày / dép","danh từ",2,"这双鞋很漂亮。","Zhè shuāng xié hěn piàoliang.","Đôi giày này đẹp."],
+  ["帽子","màozi","cái mũ","danh từ",2,"戴帽子。","Dài màozi.","Đội mũ."],
+  ["颜色","yánsè","màu sắc","danh từ",2,"你喜欢什么颜色？","Nǐ xǐhuan shénme yánsè?","Bạn thích màu gì?"],
+  ["红","hóng","màu đỏ","tính từ",2,"红色很喜庆。","Hóngsè hěn xǐqìng.","Màu đỏ rất vui tươi."],
+  ["蓝","lán","màu xanh dương","tính từ",2,"蓝天很美丽。","Lántiān hěn měilì.","Bầu trời xanh rất đẹp."],
+  ["白","bái","màu trắng","tính từ",2,"白色很干净。","Báisè hěn gānjìng.","Màu trắng rất sạch."],
+  ["黑","hēi","màu đen","tính từ",2,"黑色很正式。","Hēisè hěn zhèngshì.","Màu đen rất trang trọng."],
+  ["黄","huáng","màu vàng","tính từ",2,"黄色很亮。","Huángsè hěn liàng.","Màu vàng rất sáng."],
+  ["绿","lǜ","màu xanh lá","tính từ",2,"绿色很自然。","Lǜsè hěn zìrán.","Màu xanh lá rất tự nhiên."],
+  ["好","hǎo","tốt / hay","tính từ",1,"你好吗？","Nǐ hǎo ma?","Bạn khỏe không?"],
+  ["难","nán","khó","tính từ",1,"中文很难。","Zhōngwén hěn nán.","Tiếng Trung rất khó."],
+  ["容易","róngyì","dễ","tính từ",2,"这个很容易。","Zhège hěn róngyì.","Cái này rất dễ."],
+  ["快","kuài","nhanh","tính từ",1,"他走得很快。","Tā zǒu de hěn kuài.","Ấy đi rất nhanh."],
+  ["慢","màn","chậm","tính từ",1,"请说慢一点。","Qǐng shuō màn yīdiǎn.","Nói chậm một chút."],
+  ["早","zǎo","sớm","tính từ",1,"早上好。","Zǎoshang hǎo.","Chào buổi sáng."],
+  ["晚","wǎn","muộn","tính từ",1,"太晚了。","Tài wǎn le.","Quá muộn rồi."],
+  ["远","yuǎn","xa","tính từ",1,"学校很远。","Xuéxiào hěn yuǎn.","Trường rất xa."],
+  ["近","jìn","gần","tính từ",1,"我家很近。","Wǒ jiā hěn jìn.","Nhà tôi rất gần."],
+  ["饿","è","đói","tính từ",1,"我饿了。","Wǒ è le.","Tôi đói rồi."],
+  ["渴","kě","khát","tính từ",2,"我渴了。","Wǒ kě le.","Tôi khát rồi."],
+  ["帅","shuài","đẹp trai","tính từ",2,"他很帅。","Tā hěn shuài.","Ấy đẹp trai."],
+  ["可爱","kě'ài","đáng yêu","tính từ",2,"孩子很可爱。","Háizi hěn kě'ài.","Đứa trẻ rất đáng yêu."],
+  ["聪明","cōngming","thông minh","tính từ",2,"他很聪明。","Tā hěn cōngming.","Ấy rất thông minh."],
+  ["老","lǎo","già / cũ (người)","tính từ",1,"他不老。","Tā bù lǎo.","Ấy không già."],
+  ["图书馆","túshūguǎn","thư viện","danh từ",2,"我在图书馆看书。","Wǒ zài túshūguǎn kàn shū.","Tôi đọc sách ở thư viện."],
+  ["超市","chāoshì","siêu thị","danh từ",2,"去超市买东西。","Qù chāoshì mǎi dōngxi.","Đi siêu thị mua đồ."],
+  ["机场","jīchǎng","sân bay","danh từ",2,"机场很远。","Jīchǎng hěn yuǎn.","Sân bay rất xa."],
+  ["车站","chēzhàn","bến xe / ga","danh từ",2,"在车站等我。","Zài chēzhàn děng wǒ.","Đợi tôi ở bến xe."],
+  ["公园","gōngyuán","công viên","danh từ",2,"公园很漂亮。","Gōngyuán hěn piàoliang.","Công viên rất đẹp."],
+  ["教室","jiàoshì","phòng học","danh từ",2,"教室里有学生。","Jiàoshì lǐ yǒu xuésheng.","Trong lớp có học sinh."],
+  ["桌子","zhuōzi","cái bàn","danh từ",2,"书在桌子上。","Shū zài zhuōzi shàng.","Sách ở trên bàn."],
+  ["椅子","yǐzi","cái ghế","danh từ",2,"椅子在桌子旁边。","Yǐzi zài zhuōzi pángbiān.","Ghế ở bên cạnh bàn."],
+  ["床","chuáng","giường","danh từ",2,"床上有衣服。","Chuáng shàng yǒu yīfu.","Trên giường có quần áo."],
+  ["门","mén","cửa","danh từ",2,"请开门。","Qǐng kāi mén.","Làm ơn mở cửa."],
+  ["窗户","chuānghu","cửa sổ","danh từ",2,"打开窗户。","Dǎkāi chuānghu.","Mở cửa sổ."],
+  ["公共汽车","gōnggòng qìchē","xe buýt","danh từ",2,"坐公共汽车去。","Zuò gōnggòng qìchē qù.","Đi xe buýt."],
+  ["地铁","dìtiě","tàu điện ngầm","danh từ",2,"坐地铁很快。","Zuò dìtiě hěn kuài.","Đi tàu điện ngầm rất nhanh."],
+  ["出租车","chūzūchē","taxi","danh từ",2,"叫一辆出租车。","Jiào yī liàng chūzūchē.","Gọi một chiếc taxi."],
+  ["票","piào","vé","danh từ",2,"买票。","Mǎi piào.","Mua vé."],
+  ["头","tóu","đầu","danh từ",2,"我头疼。","Wǒ tóu téng.","Tôi đau đầu."],
+  ["眼睛","yǎnjing","mắt","danh từ",2,"她的眼睛很大。","Tā de yǎnjing hěn dà.","Mắt cô ấy rất to."],
+  ["鼻子","bízi","mũi","danh từ",2,"鼻子很高。","Bízi hěn gāo.","Mũi cao."],
+  ["嘴","zuǐ","miệng","danh từ",2,"张开嘴。","Zhāngkāi zuǐ.","Há miệng ra."],
+  ["耳朵","ěrduo","tai","danh từ",2,"耳朵很灵。","Ěrduo hěn líng.","Tai rất thính."],
+  ["手","shǒu","tay","danh từ",2,"洗手。","Xǐ shǒu.","Rửa tay."],
+  ["脚","jiǎo","chân","danh từ",2,"脚很疼。","Jiǎo hěn téng.","Chân rất đau."],
+  ["牛奶","niúnǎi","sữa bò","danh từ",2,"喝牛奶。","Hē niúnǎi.","Uống sữa."],
+  ["鸡蛋","jīdàn","quả trứng","danh từ",2,"吃鸡蛋。","Chī jīdàn.","Ăn trứng."],
+  ["面包","miànbāo","bánh mì","danh từ",2,"面包很好吃。","Miànbāo hěn hǎochī.","Bánh mì rất ngon."],
+  ["同学","tóngxué","bạn cùng lớp","danh từ",1,"他是我的同学。","Tā shì wǒ de tóngxué.","Ấy là bạn cùng lớp tôi."],
+  ["作业","zuòyè","bài tập về nhà","danh từ",2,"写作业。","Xiě zuòyè.","Làm bài tập về nhà."],
+  ["考试","kǎoshì","kỳ thi","danh từ",2,"明天有考试。","Míngtiān yǒu kǎoshì.","Ngày mai có thi."],
+  ["问题","wèntí","câu hỏi / vấn đề","danh từ",2,"我有一个问题。","Wǒ yǒu yīge wèntí.","Tôi có một câu hỏi."],
+  ["意思","yìsi","ý nghĩa","danh từ",2,"这是什么意思？","Zhè shì shénme yìsi?","Đây nghĩa là gì?"],
+  ["前","qián","phía trước","danh từ",2,"在前面。","Zài qiánmian.","Ở phía trước."],
+  ["后","hòu","phía sau","danh từ",2,"在后面。","Zài hòumian.","Ở phía sau."],
+  ["里","lǐ","trong","danh từ",2,"在房间里。","Zài fángjiān lǐ.","Ở trong phòng."],
+  ["外","wài","ngoài","danh từ",2,"在外面。","Zài wàimian.","Ở bên ngoài."],
+  ["开始","kāishǐ","bắt đầu","động từ",3,"开始上课了。","Kāishǐ shàngkè le.","Bắt đầu học rồi."],
+  ["结束","jiéshù","kết thúc","động từ",3,"电影结束了。","Diànyǐng jiéshù le.","Phim kết thúc rồi."],
+  ["继续","jìxù","tiếp tục","động từ",3,"请继续说。","Qǐng jìxù shuō.","Làm ơn tiếp tục nói."],
+  ["完成","wánchéng","hoàn thành","động từ",3,"完成作业了。","Wánchéng zuòyè le.","Hoàn thành bài tập rồi."],
+  ["准备","zhǔnbèi","chuẩn bị","động từ",3,"准备好了吗？","Zhǔnbèi hǎo le ma?","Sẵn sàng chưa?"],
+  ["决定","juédìng","quyết định","động từ",3,"我决定去。","Wǒ juédìng qù.","Tôi quyết định đi."],
+  ["希望","xīwàng","hy vọng","động từ",3,"我希望你好。","Wǒ xīwàng nǐ hǎo.","Tôi hy vọng bạn khỏe."],
+  ["欢迎","huānyíng","chào đón","động từ",3,"欢迎光临。","Huānyíng guānglín.","Chào mừng quý khách."],
+  ["邀请","yāoqǐng","mời (trang trọng)","động từ",3,"邀请你参加。","Yāoqǐng nǐ cānjiā.","Mời bạn tham gia."],
+  ["同意","tóngyì","đồng ý","động từ",3,"我同意。","Wǒ tóngyì.","Tôi đồng ý."],
+  ["建议","jiànyì","đề nghị / gợi ý","động từ",3,"我有个建议。","Wǒ yǒu ge jiànyì.","Tôi có một đề nghị."],
+  ["讨论","tǎolùn","thảo luận","động từ",3,"讨论这个问题。","Tǎolùn zhège wèntí.","Thảo luận vấn đề này."],
+  ["介绍","jièshào","giới thiệu","động từ",3,"介绍一下。","Jièshào yīxià.","Giới thiệu một chút."],
+  ["告诉","gàosu","bảo / nói cho biết","động từ",3,"请告诉我。","Qǐng gàosu wǒ.","Làm ơn nói cho tôi biết."],
+  ["回答","huídá","trả lời","động từ",3,"回答问题。","Huídá wèntí.","Trả lời câu hỏi."],
+  ["解释","jiěshì","giải thích","động từ",3,"请解释一下。","Qǐng jiěshì yīxià.","Làm ơn giải thích."],
+  ["记得","jìde","nhớ (điều gì)","động từ",3,"我记得他。","Wǒ jìde tā.","Tôi nhớ ấý."],
+  ["忘记","wàngjì","quên","động từ",3,"我忘记了。","Wǒ wàngjì le.","Tôi quên rồi."],
+  ["发现","fāxiàn","phát hiện","động từ",3,"我发现了。","Wǒ fāxiàn le.","Tôi phát hiện ra."],
+  ["发生","fāshēng","xảy ra","động từ",3,"发生什么事？","Fāshēng shénme shì?","Chuyện gì xảy ra?"],
+  ["改变","gǎibiàn","thay đổi","động từ",3,"改变主意。","Gǎibiàn zhǔyi.","Thay đổi ý định."],
+  ["提高","tígāo","nâng cao","động từ",3,"提高水平。","Tígāo shuǐpíng.","Nâng cao trình độ."],
+  ["支持","zhīchí","ủng hộ","động từ",3,"我支持你。","Wǒ zhīchí nǐ.","Tôi ủng hộ bạn."],
+  ["照顾","zhàogù","chăm sóc","động từ",3,"照顾孩子。","Zhàogù háizi.","Chăm sóc con cái."],
+  ["关心","guānxīn","quan tâm","động từ",3,"关心别人。","Guānxīn biérén.","Quan tâm người khác."],
+  ["注意","zhùyì","chú ý","động từ",3,"注意安全。","Zhùyì ānquán.","Chú ý an toàn."],
+  ["担心","dānxīn","lo lắng","động từ",3,"别担心。","Bié dānxīn.","Đừng lo lắng."],
+  ["努力","nǔlì","cố gắng","động từ",3,"努力学习。","Nǔlì xuéxí.","Cố gắng học."],
+  ["旅行","lǚxíng","đi du lịch","động từ",3,"去旅行。","Qù lǚxíng.","Đi du lịch."],
+  ["参观","cānguān","tham quan","động từ",3,"参观博物馆。","Cānguān bówùguǎn.","Tham quan bảo tàng."],
+  ["约会","yuēhuì","hẹn hòu","động từ",3,"有个约会。","Yǒu ge yuēhuì.","Có một cuộc hẹn."],
+  ["结婚","jiéhūn","kết hôn","động từ",3,"他们结婚了。","Tāmen jiéhūn le.","Họ kết hôn rồi."],
+  ["生病","shēngbìng","bị ốm","động từ",3,"他生病了。","Tā shēngbìng le.","Ấý bị ốm."],
+  ["感冒","gǎnmào","bị cảm","động từ",3,"我感冒了。","Wǒ gǎnmào le.","Tôi bị cảm."],
+  ["药","yào","thuốc","danh từ",3,"吃药。","Chī yào.","Uống thuốc."],
+  ["护士","hùshi","y tá","danh từ",3,"护士很温柔。","Hùshi hěn wēnróu.","Y tá rất dịu dàng."],
+  ["锻炼","duànliàn","tập thể dục","động từ",3,"每天锻炼。","Měitiān duànliàn.","Mỗi ngày tập thể dục."],
+  ["搬家","bānjiā","dọn nhà","động từ",3,"我搬家了。","Wǒ bānjiā le.","Tôi dọn nhà rồi."],
+  ["打扫","dǎsǎo","dọn dẹp","động từ",3,"打扫房间。","Dǎsǎo fángjiān.","Dọn dẹp phòng."],
+  ["修理","xiūlǐ","sửa chữa","động từ",3,"修理电脑。","Xiūlǐ diànnǎo.","Sửa máy tính."],
+  ["上网","shàngwǎng","lướt mạng","động từ",3,"上网查资料。","Shàngwǎng chá zīliào.","Lướt mạng tra tài liệu."],
+  ["聊天","liáotiān","trò chuyện","động từ",3,"跟朋友聊天。","Gēn péngyou liáotiān.","Trò chuyện với bạn."],
+  ["购物","gòuwù","mua sắm","động từ",3,"去购物。","Qù gòuwù.","Đi mua sắm."],
+  ["预订","yùdìng","đặt trước","động từ",3,"预订房间。","Yùdìng fángjiān.","Đặt phòng trước."],
+  ["钥匙","yàoshi","chìa khóa","danh từ",3,"我的钥匙呢？","Wǒ de yàoshi ne?","Chìa khóa của tôi đâu?"],
+  ["电梯","diàntī","thang máy","danh từ",3,"坐电梯。","Zuò diàntī.","Đi thang máy."],
+  ["经理","jīnglǐ","quản lý / giám đốc","danh từ",3,"经理在吗？","Jīnglǐ zài ma?","Quản lý ở đây không?"],
+  ["老板","lǎobǎn","sếp / chủ","danh từ",3,"老板很严格。","Lǎobǎn hěn yángé.","Sếp rất nghiêm khắc."],
+  ["同事","tóngshì","đồng nghiệp","danh từ",3,"同事很好。","Tóngshì hěn hǎo.","Đồng nghiệp rất tốt."],
+  ["工资","gōngzī","lương","danh từ",3,"工资很高。","Gōngzī hěn gāo.","Lương rất cao."],
+  ["上班","shàngbān","đi làm","động từ",3,"八点上班。","Bā diǎn shàngbān.","Làm việc lúc 8 giờ."],
+  ["下班","xiàbān","tan làm","động từ",3,"六点下班。","Liù diǎn xiàbān.","Tan làm lúc 6 giờ."],
+  ["加班","jiābān","làm thêm giờ","động từ",3,"今天加班。","Jīntiān jiābān.","Hôm nay làm thêm."],
+  ["开会","kāihuì","họp (hội nghị)","động từ",3,"下午开会。","Xiàwǔ kāihuì.","Buổi chiều họp."],
+  ["面试","miànshì","phỏng vấn","động từ",3,"明天面试。","Míngtiān miànshì.","Ngày mai phỏng vấn."],
+  ["申请","shēnqǐng","xin / nộp đơn","động từ",3,"申请签证。","Shēnqǐng qiānzhèng.","Xin visa."],
+  ["护照","hùzhào","hộ chiếu","danh từ",3,"带护照。","Dài hùzhào.","Mang hộ chiếu."],
+  ["签证","qiānzhèng","visa","danh từ",3,"办签证。","Bàn qiānzhèng.","Làm visa."],
+  ["行李","xíngli","hành lý","danh từ",3,"收拾行李。","Shōushi xíngli.","Sắp xếp hành lý."],
+  ["地图","dìtú","bản đồ","danh từ",3,"看地图。","Kàn dìtú.","Xem bản đồ."],
+  ["方向","fāngxiàng","hướng / phương hướng","danh từ",3,"方向对了。","Fāngxiàng duì le.","Đúng hướng rồi."],
+  ["发烧","fāshāo","sốt","động từ",3,"发烧了。","Fāshāo le.","Sốt rồi."],
+  ["咳嗽","késou","ho","động từ",3,"咳嗽很厉害。","Késou hěn lìhai.","Ho nhiều lắm."],
+  ["头疼","tóuténg","đau đầu","động từ",3,"我头疼。","Wǒ tóuténg.","Tôi đau đầu."],
+  ["肚子","dùzi","bụng / dạ dày","danh từ",3,"肚子疼。","Dùzi téng.","Đau bụng."],
+  ["健康","jiànkāng","khỏe mạnh","tính từ",3,"身体健康。","Shēntǐ jiànkāng.","Sức khỏe tốt."],
+  ["重要","zhòngyào","quan trọng","tính từ",3,"很重要。","Hěn zhòngyào.","Rất quan trọng."],
+  ["困难","kùnnan","khó khăn","tính từ",3,"遇到困难。","Yùdào kùnnan.","Gặp khó khăn."],
+  ["简单","jiǎndān","đơn giản","tính từ",3,"很简单。","Hěn jiǎndān.","Rất đơn giản."],
+  ["方便","fāngbiàn","tiện lợi","tính từ",3,"很方便。","Hěn fāngbiàn.","Rất tiện lợi."],
+  ["麻烦","máfan","phiền toái","tính từ",3,"麻烦你了。","Máfan nǐ le.","Làm phiền bạn rồi."],
+  ["干净","gānjìng","sạch sẽ","tính từ",3,"很干净。","Hěn gānjìng.","Rất sạch sẽ."],
+  ["脏","zāng","bẩn","tính từ",3,"衣服脏了。","Yīfu zāng le.","Quần áo bẩn rồi."],
+  ["安静","ānjìng","yên tĩnh","tính từ",3,"请安静。","Qǐng ānjìng.","Làm ơn giữ yên lặng."],
+  ["热闹","rènào","náo nhiệt / tấp nập","tính từ",3,"街上很热闹。","Jiē shàng hěn rènào.","Phố rất náo nhiệt."],
+  ["无聊","wúliáo","chán / nhàm chán","tính từ",3,"很无聊。","Hěn wúliáo.","Rất chán."],
+  ["有趣","yǒuqù","thú vị","tính từ",3,"很有趣。","Hěn yǒuqù.","Rất thú vị."],
+  ["认真","rènzhēn","nghiêm túc / chăm chỉ","tính từ",3,"学习认真。","Xuéxí rènzhēn.","Học tập nghiêm túc."],
+  ["仔细","zǐxì","cẩn thận","tính từ",3,"仔细看。","Zǐxì kàn.","Nhìn kỹ."],
+  ["满意","mǎnyì","hài lòng","tính từ",3,"很满意。","Hěn mǎnyì.","Rất hài lòng."],
+  ["紧张","jǐnzhāng","căng thẳng","tính từ",3,"别紧张。","Bié jǐnzhāng.","Đừng căng thẳng."],
+  ["放松","fàngsōng","thư giãn","động từ",3,"放松一下。","Fàngsōng yīxià.","Thư giãn một chút."],
+  ["胖","pàng","béo / mập","tính từ",3,"有点胖。","Yǒudiǎn pàng.","Hơi béo."],
+  ["瘦","shòu","gầy","tính từ",3,"太瘦了。","Tài shòu le.","Quá gầy."],
+  ["矮","ǎi","thấp (chiều cao)","tính từ",3,"个子矮。","Gèzi ǎi.","Chiều cao thấp."],
+  ["长","cháng","dài","tính từ",3,"头发长。","Tóufa cháng.","Tóc dài."],
+  ["短","duǎn","ngắn","tính từ",3,"头发短。","Tóufa duǎn.","Tóc ngắn."],
+  ["宽","kuān","rộng","tính từ",3,"路很宽。","Lù hěn kuān.","Đường rất rộng."],
+  ["重","zhòng","nặng","tính từ",3,"箱子很重。","Xiāngzi hěn zhòng.","Vali rất nặng."],
+  ["轻","qīng","nhẹ","tính từ",3,"很轻。","Hěn qīng.","Rất nhẹ."],
+  ["甜","tián","ngọt","tính từ",3,"很甜。","Hěn tián.","Rất ngọt."],
+  ["酸","suān","chua","tính từ",3,"有点酸。","Yǒudiǎn suān.","Hơi chua."],
+  ["苦","kǔ","đắng","tính từ",3,"药很苦。","Yào hěn kǔ.","Thuốc rất đắng."],
+  ["辣","là","cay","tính từ",3,"很辣。","Hěn là.","Rất cay."],
+  ["新鲜","xīnxiān","tươi mới","tính từ",3,"鱼很新鲜。","Yú hěn xīnxiān.","Cá rất tươi."],
+  ["事情","shìqing","việc / chuyện","danh từ",3,"什么事情？","Shénme shìqing?","Chuyện gì?"],
+  ["计划","jìhuà","kế hoạch","danh từ",3,"有计划吗？","Yǒu jìhuà ma?","Có kế hoạch không?"],
+  ["机会","jīhuì","cơ hội","danh từ",3,"好机会。","Hǎo jīhuì.","Cơ hội tốt."],
+  ["消息","xiāoxi","tin tức","danh từ",3,"好消息。","Hǎo xiāoxi.","Tin tốt."],
+  ["新闻","xīnwén","tin tức (báo chí)","danh từ",3,"看新闻。","Kàn xīnwén.","Xem tin tức."],
+  ["故事","gùshi","câu chuyện","danh từ",3,"讲故事。","Jiǎng gùshi.","Kể chuyện."],
+  ["电影","diànyǐng","phim","danh từ",3,"看电影。","Kàn diànyǐng.","Xem phim."],
+  ["音乐","yīnyuè","âm nhạc","danh từ",3,"听音乐。","Tīng yīnyuè.","Nghe nhạc."],
+  ["比赛","bǐsài","cuộc thi / trận đấu","danh từ",3,"足球比赛。","Zúqiú bǐsài.","Trận bóng đá."],
+  ["运动","yùndòng","thể thao","danh từ",3,"做运动。","Zuò yùndòng.","Tập thể thao."],
+  ["足球","zúqiú","bóng đá","danh từ",3,"踢足球。","Tī zúqiú.","Chơi bóng đá."],
+  ["篮球","lánqiú","bóng rổ","danh từ",3,"打篮球。","Dǎ lánqiú.","Chơi bóng rổ."],
+  ["跑步","pǎobù","chạy bộ","động từ",3,"每天跑步。","Měitiān pǎobù.","Mỗi ngày chạy bộ."],
+  ["照片","zhàopiàn","ảnh / hình","danh từ",3,"拍照片。","Pāi zhàopiàn.","Chụp ảnh."],
+  ["杂志","zázhì","tạp chí","danh từ",3,"看杂志。","Kàn zázhì.","Đọc tạp chí."],
+  ["报纸","bàozhǐ","báo (giấy)","danh từ",3,"看报纸。","Kàn bàozhǐ.","Đọc báo."],
+  ["小说","xiǎoshuō","tiểu thuyết","danh từ",3,"读小说。","Dú xiǎoshuō.","Đọc tiểu thuyết."],
+  ["节目","jiémù","chương trình","danh từ",3,"电视节目。","Diànshì jiémù.","Chương trình ti vi."],
+  ["以前","yǐqián","trước đây","danh từ",3,"以前我住这儿。","Yǐqián wǒ zhù zhèr.","Trước đây tôi ở đây."],
+  ["以后","yǐhòu","sau này","danh từ",3,"以后再说。","Yǐhòu zài shuō.","Sau này nói sau."],
+  ["最近","zuìjìn","gần đây","danh từ",3,"最近怎么样？","Zuìjìn zěnmeyàng?","Dạo này thế nào?"],
+  ["已经","yǐjīng","đã (rồi)","phó từ",3,"已经走了。","Yǐjīng zǒu le.","Đã đi rồi."],
+  ["正在","zhèngzài","đang (làm)","phó từ",3,"正在吃饭。","Zhèngzài chī fàn.","Đang ăn cơm."],
+  ["马上","mǎshàng","ngay lập tức","phó từ",3,"马上来。","Mǎshàng lái.","Ngay lập tức đến."],
+  ["突然","tūrán","đột nhiên","phó từ",3,"突然下雨了。","Tūrán xiàyǔ le.","Đột nhiên mưa."],
+  ["终于","zhōngyú","cuối cùng","phó từ",3,"终于到了。","Zhōngyú dào le.","Cuối cùng cũng đến."],
+  ["一直","yìzhí","mãi / luôn luôn","phó từ",3,"一直走。","Yìzhí zǒu.","Đi thẳng."],
+  ["经常","jīngcháng","thường xuyên","phó từ",3,"经常来。","Jīngcháng lái.","Thường xuyên đến."],
+  ["总是","zǒngshì","luôn luôn","phó từ",3,"总是迟到。","Zǒngshì chídào.","Luôn đi muộn."],
+  ["刚才","gāngcái","vừa rồi","phó từ",3,"刚才他在这儿。","Gāngcái tā zài zhèr.","Vừa rồi ấý ở đây."],
+  ["世界","shìjiè","thế giới","danh từ",3,"全世界。","Quán shìjiè.","Toàn thế giới."],
+  ["环境","huánjìng","môi trường","danh từ",3,"环境很好。","Huánjìng hěn hǎo.","Môi trường tốt."],
+  ["空气","kōngqì","không khí","danh từ",3,"空气新鲜。","Kōngqì xīnxiān.","Không khí trong lành."],
+  ["和","hé","và / với","liên từ",3,"我和你。","Wǒ hé nǐ.","Tôi và bạn."],
+  ["跟","gēn","với / cùng","giới từ",3,"跟我来。","Gēn wǒ lái.","Đi theo tôi."],
+  ["从","cóng","từ","giới từ",3,"从中国来。","Cóng Zhōngguó lái.","Đến từ Trung Quốc."],
+  ["向","xiàng","hướng về","giới từ",3,"向前走。","Xiàng qián zǒu.","Đi về phía trước."],
+  ["比","bǐ","hơn (so sánh)","giới từ",3,"我比你高。","Wǒ bǐ nǐ gāo.","Tôi cao hơn bạn."],
+  ["被","bèi","bị (thể bị động)","trợ từ",3,"被发现了。","Bèi fāxiàn le.","Bị phát hiện rồi."],
+  ["把","bǎ","(cấu trúc 把)","trợ từ",3,"把窗户打开。","Bǎ chuānghu dǎkāi.","Hãy mở cửa sổ."],
+  ["为了","wèile","để (vì mục đích)","liên từ",3,"为了学习。","Wèile xuéxí.","Để học tập."],
+  ["关于","guānyú","về (vấn đề)","giới từ",3,"关于这个问题。","Guānyú zhège wèntí.","Về vấn đề này."],
+  ["通过","tōngguò","thông qua / bằng cách","động từ",3,"通过考试。","Tōngguò kǎoshì.","Đậu kỳ thi."],
+  ["离","lí","cách (khoảng cách)","giới từ",3,"离这儿远吗？","Lí zhèr yuǎn ma?","Cách đây xa không?"],
+  ["因为","yīnwèi","bởi vì","liên từ",3,"因为下雨。","Yīnwèi xiàyǔ.","Vì trời mưa."],
+  ["所以","suǒyǐ","vì vậy","liên từ",3,"所以我没去。","Suǒyǐ wǒ méi qù.","Vì vậy tôi không đi."],
+  ["但是","dànshì","nhưng","liên từ",3,"很贵，但是很好。","Hěn guì, dànshì hěn hǎo.","Rất đắt nhưng rất tốt."],
+  ["虽然","suīrán","mặc dù","liên từ",3,"虽然累，但是高兴。","Suīrán lèi, dànshì gāoxìng.","Mặc dù mệt nhưng vui."],
+  ["如果","rúguǒ","nếu","liên từ",3,"如果有时间。","Rúguǒ yǒu shíjiān.","Nếu có thời gian."],
+  ["或者","huòzhě","hoặc","liên từ",3,"茶或者咖啡。","Chá huòzhě kāfēi.","Trà hoặc cà phê."],
+  ["还是","háishì","hay là (lựa chọn)","liên từ",3,"喝茶还是咖啡？","Hē chá háishì kāfēi?","Uống trà hay cà phê?"],
+  ["可能","kěnéng","có thể (có lẽ)","phó từ",3,"可能下雨。","Kěnéng xiàyǔ.","Có thể mưa."],
+  ["大概","dàgài","khoảng / chừng","phó từ",3,"大概十点。","Dàgài shí diǎn.","Khoảng mười giờ."],
+  ["也许","yěxǔ","có lẽ / có thể","phó từ",3,"也许他知道。","Yěxǔ tā zhīdào.","Có lẽ ấý biết."],
+  ["一定","yīdìng","chắc chắn / nhất định","phó từ",3,"一定来。","Yīdìng lái.","Chắc chắn đến."],
+  ["当然","dāngrán","dĩ nhiên / tất nhiên","phó từ",3,"当然可以。","Dāngrán kěyǐ.","Dĩ nhiên là được."],
+  ["其实","qíshí","thực ra / nói thật","phó từ",3,"其实很简单。","Qíshí hěn jiǎndān.","Thực ra rất đơn giản."],
+  ["原来","yuánlái","hóa ra / ban đầu","phó từ",3,"原来是你。","Yuánlái shì nǐ.","Hóa ra là bạn."],
+  ["应该","yīnggāi","nên / đáng lẽ","động từ trợ giúp",3,"应该休息。","Yīnggāi xiūxi.","Nên nghỉ ngơi."],
+  ["必须","bìxū","phải (bắt buộc)","động từ trợ giúp",3,"必须去。","Bìxū qù.","Phải đi."],
+  ["需要","xūyào","cần","động từ",3,"需要帮助。","Xūyào bāngzhù.","Cần giúp đỡ."],
+  ["要求","yāoqiú","yêu cầu / đòi hỏi","động từ",3,"要求很高。","Yāoqiú hěn gāo.","Yêu cầu rất cao."],
+  ["又","yòu","lại / nữa (đã xảy ra)","phó từ",3,"又来了。","Yòu lái le.","Lại đến nữa."],
+  ["再","zài","lại / nữa (sau này)","phó từ",3,"再见。","Zàijiàn.","Hẹn gặp lại."],
+  ["才","cái","mới (chỉ vừa)","phó từ",3,"才来。","Cái lái.","Mới đến."],
+  ["就","jiù","liền / ngay / thì","phó từ",3,"就来。","Jiù lái.","Ngay lập tức đến."],
+  ["都","dōu","đều / tất cả","phó từ",3,"都好。","Dōu hǎo.","Đều tốt."],
+  ["也","yě","cũng","phó từ",3,"我也去。","Wǒ yě qù.","Tôi cũng đi."],
+  ["还","hái","còn / vẫn / nữa","phó từ",3,"还有吗？","Hái yǒu ma?","Còn nữa không?"],
+  ["只","zhǐ","chỉ có / chỉ","phó từ",3,"只有一个。","Zhǐ yǒu yīge.","Chỉ có một."],
+  ["最","zuì","nhất (bậc cao nhất)","phó từ",3,"最好。","Zuì hǎo.","Tốt nhất."],
+  ["更","gèng","hơn nữa / càng","phó từ",3,"更好。","Gèng hǎo.","Tốt hơn."],
+  ["太","tài","quá / cực kỳ","phó từ",3,"太好了。","Tài hǎo le.","Tuyệt vời quá."],
+  ["真","zhēn","thật sự / really","phó từ",3,"真好。","Zhēn hǎo.","Thật tốt."],
+  ["非常","fēicháng","rất / cực kỳ","phó từ",3,"非常好。","Fēicháng hǎo.","Rất tốt."],
+  ["特别","tèbié","đặc biệt / đặc biệt là","phó từ",3,"特别好。","Tèbié hǎo.","Đặc biệt tốt."],
+  ["比较","bǐjiào","tương đối / khá","phó từ",3,"比较贵。","Bǐjiào guì.","Tương đối đắt."],
+  ["有点","yǒudiǎn","hơi / một chút","phó từ",3,"有点贵。","Yǒudiǎn guì.","Hơi đắt."],
+  ["一些","yìxiē","một ít / một số","lượng từ",3,"一些水果。","Yìxiē shuǐguǒ.","Một ít trái cây."],
+  ["附近","fùjìn","gần đó / xung quanh","danh từ",3,"在附近。","Zài fùjìn.","Ở gần đó."],
+  ["中间","zhōngjiān","ở giữa / giữa","danh từ",3,"在中间。","Zài zhōngjiān.","Ở ở giữa."],
+  ["旁边","pángbiān","bên cạnh / bên cạnh","danh từ",3,"在旁边。","Zài pángbiān.","Ở bên cạnh."],
+  ["对面","duìmiàn","đối diện / bên kia","danh từ",3,"在对面。","Zài duìmiàn.","Ở đối diện."],
+  ["这里","zhèlǐ","đây","đại từ",3,"在这里。","Zài zhèlǐ.","Ở đây."],
+  ["那里","nàlǐ","đó","đại từ",3,"在那里。","Zài nàlǐ.","Ở đó."],
+  ["哪里","nǎlǐ","đâu / ở đâu","đại từ",3,"在哪里？","Zài nǎlǐ?","Ở đâu?"],
+  ["大学","dàxué","đại học","danh từ",3,"上大学。","Shàng dàxué.","Học đại học."],
+  ["年级","niánjí","khối lớp / năm học","danh từ",3,"二年级。","Èr niánjí.","Khối hai."],
+  ["宿舍","sùshè","ký túc xá","danh từ",3,"回宿舍。","Huí sùshè.","Về ký túc xá."],
+  ["操场","cāochǎng","sân thể dục / sân vận động","danh từ",3,"在操场。","Zài cāochǎng.","Ở sân vận động."],
+  ["成绩","chéngjì","thành tích / điểm số","danh từ",3,"成绩很好。","Chéngjì hěn hǎo.","Điểm rất tốt."],
+  ["毕业","bìyè","tốt nghiệp","động từ",3,"大学毕业。","Dàxué bìyè.","Tốt nghiệp đại học."],
+  ["留学","liúxué","du học","động từ",3,"去中国留学。","Qù Zhōngguó liúxué.","Đi Trung Quốc du học."],
+  ["复习","fùxí","ôn tập","động từ",3,"复习功课。","Fùxí gōngkè.","Ôn bài."],
+  ["练习","liànxí","luyện tập / bài tập","động từ",3,"练习汉字。","Liànxí hànzì.","Luyện chữ Hán."],
+  ["进步","jìnbù","tiến bộ","động từ",3,"进步很大。","Jìnbù hěn dà.","Tiến bộ rất lớn."],
+  ["工厂","gōngchǎng","nhà máy","danh từ",3,"在工厂工作。","Zài gōngchǎng gōngzuò.","Làm ở nhà máy."],
+  ["市场","shìchǎng","chợ / thị trường","danh từ",3,"去市场。","Qù shìchǎng.","Đi chợ."],
+  ["客厅","kètīng","phòng khách","danh từ",3,"在客厅。","Zài kètīng.","Ở phòng khách."],
+  ["卧室","wòshì","phòng ngủ","danh từ",3,"卧室很大。","Wòshì hěn dà.","Phòng ngủ rất to."],
+  ["厨房","chúfáng","bếp","danh từ",3,"在厨房。","Zài chúfáng.","Ở bếp."],
+  ["厕所","cèsuǒ","nhà vệ sinh","danh từ",3,"厕所在哪儿？","Cèsuǒ zài nǎr?","Nhà vệ sinh ở đâu?"],
+  ["楼","lóu","tòa nhà / tầng","danh từ",3,"这栋楼。","Zhè dòng lóu.","Tòa nhà này."],
+  ["层","céng","tầng (nhà)","danh từ",3,"三楼。","Sān lóu.","Tầng ba."],
+  ["沙发","shāfā","sofa / ghế sô pha","danh từ",3,"沙发很舒服。","Shāfā hěn shūfu.","Sofa rất êm."],
+  ["电视","diànshì","ti vi","danh từ",3,"看电视。","Kàn diànshì.","Xem ti vi."],
+  ["冰箱","bīngxiāng","tủ lạnh","danh từ",3,"在冰箱里。","Zài bīngxiāng lǐ.","Trong tủ lạnh."],
+  ["空调","kōngtiáo","máy lạnh / điều hòa","danh từ",3,"开空调。","Kāi kōngtiáo.","Bật máy lạnh."],
+  ["灯","dēng","đèn","danh từ",3,"开灯。","Kāi dēng.","Bật đèn."],
+  ["镜子","jìngzi","gương","danh từ",3,"照镜子。","Zhào jìngzi.","Nhìn gương."],
+  ["杯子","bēizi","cốc / ly / chén","danh từ",3,"一杯水。","Yī bēi shuǐ.","Một cốc nước."],
+  ["瓶子","píngzi","chai / lọ","danh từ",3,"一瓶啤酒。","Yī píng píjiǔ.","Một chai bia."],
+  ["包","bāo","cái túi / cái bao","danh từ",3,"我的包。","Wǒ de bāo.","Cái túi của tôi."],
+  ["箱子","xiāngzi","vali / thùng / hộp","danh từ",3,"箱子很重。","Xiāngzi hěn zhòng.","Vali rất nặng."],
+  ["礼物","lǐwù","quà tặng","danh từ",3,"送礼物。","Sòng lǐwù.","Tặng quà."],
+  ["块","kuài","đồng (tiền lẻ)","lượng từ",3,"十块钱。","Shí kuài qián.","Mười đồng."],
+  ["价格","jiàgé","giá cả","danh từ",3,"价格合理。","Jiàgé hélǐ.","Giá cả hợp lý."],
+  ["信","xìn","thư (thư tín)","danh từ",3,"写信。","Xiě xìn.","Viết thư."],
+  ["邮件","yóujiàn","email / thư điện tử","danh từ",3,"发邮件。","Fā yóujiàn.","Gửi email."],
+  ["地址","dìzhǐ","địa chỉ","danh từ",3,"你的地址。","Nǐ de dìzhǐ.","Địa chỉ của bạn."],
+  ["号码","hàomǎ","số (điện thoại...)","danh từ",3,"电话号码。","Diànhuà hàomǎ.","Số điện thoại."],
+  ["网络","wǎngluò","mạng internet","danh từ",3,"网络很快。","Wǎngluò hěn kuài.","Mạng rất nhanh."],
+  ["网站","wǎngzhàn","trang web","danh từ",3,"这个网站。","Zhège wǎngzhàn.","Trang web này."],
+  ["密码","mìmǎ","mật khẩu","danh từ",3,"输入密码。","Shūrù mìmǎ.","Nhập mật khẩu."],
+  ["字","zì","chữ (Hán)","danh từ",3,"写汉字。","Xiě hànzì.","Viết chữ Hán."],
+  ["词","cí","từ (ngữ)","danh từ",3,"这个词。","Zhège cí.","Từ này."],
+  ["句子","jùzi","câu (ngữ pháp)","danh từ",3,"一个句子。","Yīge jùzi.","Một câu."],
+  ["字典","zìdiǎn","từ điển","danh từ",3,"查字典。","Chá zìdiǎn.","Tra từ điển."],
+  ["歌曲","gēqǔ","bài hát","danh từ",3,"这首歌曲。","Zhè shǒu gēqǔ.","Bài hát này."],
+  ["旅游","lǚyóu","du lịch","động từ",3,"去旅游。","Qù lǚyóu.","Đi du lịch."],
+  ["交通","jiāotōng","giao thông","danh từ",3,"交通方便。","Jiāotōng fāngbiàn.","Giao thông thuận tiện."],
+  ["船","chuán","thuyền / tàu thủy","danh từ",3,"坐船。","Zuò chuán.","Đi thuyền."],
+  ["气候","qìhòu","khí hậu","danh từ",3,"气候很好。","Qìhòu hěn hǎo.","Khí hậu tốt."],
+  ["温度","wēndù","nhiệt độ","danh từ",3,"温度很高。","Wēndù hěn gāo.","Nhiệt độ rất cao."],
+  ["晴","qíng","trời nắng (quang)","tính từ",3,"今天晴。","Jīntiān qíng.","Hôm nay trời nắng."],
+  ["阴","yīn","trời âm u","tính từ",3,"阴天。","Yīntiān.","Trời âm u."],
+  ["云","yún","mây","danh từ",3,"很多云。","Hěn duō yún.","Nhiều mây."],
+  ["风","fēng","gió","danh từ",3,"风很大。","Fēng hěn dà.","Gió rất lớn."],
+  ["雪","xuě","tuyết","danh từ",3,"下雪了。","Xià xuě le.","Tuyết rơi rồi."],
+  ["夏天","xiàtiān","mùa hè","danh từ",3,"夏天很热。","Xiàtiān hěn rè.","Mùa hè rất nóng."],
+  ["秋天","qiūtiān","mùa thu","danh từ",3,"秋天很凉快。","Qiūtiān hěn liángkuai.","Mùa thu mát mẻ."],
+  ["冬天","dōngtiān","mùa đông","danh từ",3,"冬天很冷。","Dōngtiān hěn lěng.","Mùa đông rất lạnh."],
+  ["季节","jìjié","mùa (trong năm)","danh từ",3,"四个季节。","Sìge jìjié.","Bốn mùa."],
+  ["月亮","yuèliang","mặt trăng","danh từ",3,"月亮很圆。","Yuèliang hěn yuán.","Mặt trăng rất tròn."],
+  ["星星","xīngxing","ngôi sao","danh từ",3,"很多星星。","Hěn duō xīngxing.","Nhiều sao."],
+  ["山","shān","núi","danh từ",3,"爬山。","Pá shān.","Leo núi."],
+  ["河","hé","sông","danh từ",3,"这条河。","Zhè tiáo hé.","Dòng sông này."],
+  ["海","hǎi","biển","danh từ",3,"去海边。","Qù hǎibiān.","Đi bờ biển."],
+  ["花","huā","hoa","danh từ",3,"买花。","Mǎi huā.","Mua hoa."],
+  ["猫","māo","mèo","danh từ",3,"一只猫。","Yī zhī māo.","Một con mèo."],
+  ["狗","gǒu","chó","danh từ",3,"一只狗。","Yī zhī gǒu.","Một con chó."],
+  ["鸟","niǎo","chim","danh từ",3,"一只鸟。","Yī zhī niǎo.","Một con chim."],
+  ["马","mǎ","ngựa","danh từ",3,"骑马。","Qí mǎ.","Cưỡi ngựa."],
+  ["身体","shēntǐ","cơ thể / sức khỏe","danh từ",3,"身体好。","Shēntǐ hǎo.","Sức khỏe tốt."],
+  ["脸","liǎn","mặt","danh từ",3,"洗脸。","Xǐ liǎn.","Rửa mặt."],
+  ["牙","yá","răng","danh từ",3,"刷牙。","Shuā yá.","Đánh răng."],
+  ["腿","tuǐ","chân (từ hông xuống)","danh từ",3,"腿疼。","Tuǐ téng.","Đau chân."],
+  ["背","bèi","lưng","danh từ",3,"后背疼。","Hòubèi téng.","Đau lưng."],
+  ["疼","téng","đau","tính từ",3,"头疼。","Tóu téng.","Đau đầu."],
+  ["舒服","shūfu","dễ chịu / thoải mái","tính từ",3,"很舒服。","Hěn shūfu.","Rất thoải mái."],
+  ["生气","shēngqì","giận dữ","động từ",3,"别生气。","Bié shēngqì.","Đừng giận."],
+  ["害怕","hàipà","sợ hãi","động từ",3,"别害怕。","Bié hàipà.","Đừng sợ."],
+  ["失望","shīwàng","thất vọng","tính từ",3,"很失望。","Hěn shīwàng.","Rất thất vọng."],
+  ["感动","gǎndòng","xúc động","tính từ",3,"很感动。","Hěn gǎndòng.","Rất xúc động."],
+  ["讨厌","tǎoyàn","ghét / khó chịu","động từ",3,"讨厌下雨。","Tǎoyàn xiàyǔ.","Ghét trời mưa."],
+  ["美丽","měilì","đẹp (trang trọng)","tính từ",3,"很美丽。","Hěn měilì.","Rất đẹp."],
+  ["勇敢","yǒnggǎn","dũng cảm","tính từ",3,"很勇敢。","Hěn yǒnggǎn.","Rất dũng cảm."],
+  ["年轻","niánqīng","trẻ (tuổi tác)","tính từ",3,"很年轻。","Hěn niánqīng.","Rất trẻ."],
+  ["岁","suì","tuổi","lượng từ",3,"二十岁。","Èrshí suì.","Hai mươi tuổi."],
+  ["儿子","érzi","con trai","danh từ",3,"一个儿子。","Yīge érzi.","Một con trai."],
+  ["女儿","nǚ'ér","con gái","danh từ",3,"一个女儿。","Yīge nǚ'ér.","Một con gái."],
+  ["邻居","línjū","hàng xóm","danh từ",3,"邻居很好。","Línjū hěn hǎo.","Hàng xóm tốt."],
+  ["城市","chéngshì","thành phố","danh từ",3,"大城市。","Dà chéngshì.","Thành phố lớn."],
+  ["国家","guójiā","quốc gia","danh từ",3,"我的国家。","Wǒ de guójiā.","Quốc gia của tôi."],
+  ["语言","yǔyán","ngôn ngữ","danh từ",3,"学习语言。","Xuéxí yǔyán.","Học ngôn ngữ."],
+  ["英语","Yīngyǔ","tiếng Anh","danh từ",3,"说英语。","Shuō Yīngyǔ.","Nói tiếng Anh."],
+  ["参加","cānjiā","tham gia","động từ",3,"参加比赛。","Cānjiā bǐsài.","Tham gia cuộc thi."],
+  ["借","jiè","mượn / cho mượn","động từ",3,"借一本书。","Jiè yī běn shū.","Mượn một cuốn sách."],
+  ["还","huán","trả (đồ mượn / nợ)","động từ",3,"还书。","Huán shū.","Trả sách."],
+  ["换","huàn","đổi / thay","động từ",3,"换钱。","Huàn qián.","Đổi tiền."],
+  ["丢","diū","làm mất / vứt","động từ",3,"丢了钥匙。","Diū le yàoshi.","Làm mất chìa khóa."],
+  ["付","fù","trả (tiền)","động từ",3,"付钱。","Fù qián.","Trả tiền."],
+  ["花","huā","tiêu (tiền / thời gian)","động từ",3,"花钱。","Huā qián.","Tiêu tiền."],
+  ["教","jiāo","dạy (cho ai)","động từ",3,"教中文。","Jiāo Zhōngwén.","Dạy tiếng Trung."],
+  ["学习","xuéxí","học tập","động từ",3,"学习中文。","Xuéxí Zhōngwén.","Học tiếng Trung."],
+  ["原谅","yuánliàng","tha thứ / thứ lỗi","động từ",3,"请原谅我。","Qǐng yuánliàng wǒ.","Làm ơn tha thứ cho tôi."],
+  ["感谢","gǎnxiè","cảm ơn (trang trọng)","động từ",3,"非常感谢。","Fēicháng gǎnxiè.","Cảm ơn rất nhiều."],
+  ["鼓励","gǔlì","khuyến khích","động từ",3,"鼓励他。","Gǔlì tā.","Khuyến khích ấý."],
+  ["接受","jiēshòu","chấp nhận","động từ",3,"接受礼物。","Jiēshòu lǐwù.","Chấp nhận quà."],
+  ["拒绝","jùjué","từ chối","động từ",3,"拒绝了。","Jùjué le.","Đã từ chối."],
+  ["选择","xuǎnzé","lựa chọn","động từ",3,"自己选择。","Zìjǐ xuǎnzé.","Tự lựa chọn."],
+  ["安排","ānpái","sắp xếp / an bài","động từ",3,"安排一下。","Ānpái yīxià.","Sắp xếp một chút."],
+  ["组织","zǔzhī","tổ chức","động từ",3,"组织活动。","Zǔzhī huódòng.","Tổ chức hoạt động."],
+  ["影响","yǐngxiǎng","ảnh hưởng","động từ",4,"影响很大。","Yǐngxiǎng hěn dà.","Ảnh hưởng rất lớn."],
+  ["发展","fāzhǎn","phát triển","động từ",4,"发展很快。","Fāzhǎn hěn kuài.","Phát triển rất nhanh."],
+  ["实现","shíxiàn","thực hiện","động từ",4,"实现梦想。","Shíxiàn mèngxiǎng.","Thực hiện ước mơ."],
+  ["提供","tígōng","cung cấp","động từ",4,"提供帮助。","Tígōng bāngzhù.","Cung cấp sự giúp đỡ."],
+  ["包括","bāokuò","bao gồm","động từ",4,"包括我。","Bāokuò wǒ.","Bao gồm cả tôi."],
+  ["达到","dádào","đạt được","động từ",4,"达到目标。","Dádào mùbiāo.","Đạt được mục tiêu."],
+  ["保持","bǎochí","giữ vững / duy trì","động từ",4,"保持安静。","Bǎochí ānjìng.","Giữ yên tĩnh."],
+  ["保证","bǎozhèng","đảm bảo","động từ",4,"我保证。","Wǒ bǎozhèng.","Tôi đảm bảo."],
+  ["保护","bǎohù","bảo vệ","động từ",4,"保护环境。","Bǎohù huánjìng.","Bảo vệ môi trường."],
+  ["表示","biǎoshì","thể hiện / biểu thị","động từ",4,"表示感谢。","Biǎoshì gǎnxiè.","Thể hiện sự biết ơn."],
+  ["表现","biǎoxiàn","biểu hiện / tỏ ra","động từ",4,"表现很好。","Biǎoxiàn hěn hǎo.","Biểu hiện rất tốt."],
+  ["参与","cānyù","tham gia (vào)","động từ",4,"参与活动。","Cānyù huódòng.","Tham gia hoạt động."],
+  ["参考","cānkǎo","tham khảo","động từ",4,"参考一下。","Cānkǎo yīxià.","Tham khảo một chút."],
+  ["产生","chǎnshēng","sinh ra / nảy sinh","động từ",4,"产生兴趣。","Chǎnshēng xìngqù.","Nảy sinh hứng thú."],
+  ["超过","chāoguò","vượt quá","động từ",4,"超过预期。","Chāoguò yùqī.","Vượt quá mong đợi."],
+  ["成为","chéngwéi","trở thành","động từ",4,"成为老师。","Chéngwéi lǎoshī.","Trở thành giáo viên."],
+  ["出现","chūxiàn","xuất hiện","động từ",4,"出现了问题。","Chūxiàn le wèntí.","Xuất hiện vấn đề."],
+  ["除了","chúle","ngoài ra / trừ khi","giới từ",4,"除了我。","Chúle wǒ.","Ngoài ra tôi."],
+  ["代表","dàibiǎo","đại diện","động từ",4,"代表大家。","Dàibiǎo dàjiā.","Đại diện cho mọi người."],
+  ["导致","dǎozhì","dẫn đến / gây ra","động từ",4,"导致失败。","Dǎozhì shībài.","Dẫn đến thất bại."],
+  ["得到","dédào","nhận được / được","động từ",4,"得到机会。","Dédào jīhuì.","Nhận được cơ hội."],
+  ["等于","děngyú","bằng với / nghĩa là","động từ",4,"等于零。","Děngyú líng.","Bằng không."],
+  ["调查","diàochá","điều tra / khảo sát","động từ",4,"调查情况。","Diàochá qíngkuàng.","Điều tra tình hình."],
+  ["独立","dúlì","độc lập","tính từ",4,"独立生活。","Dúlì shēnghuó.","Sống độc lập."],
+  ["对待","duìdài","đối xử với","động từ",4,"对待朋友。","Duìdài péngyou.","Đối xử với bạn bè."],
+  ["发挥","fāhuī","phát huy","động từ",4,"发挥作用。","Fāhuī zuòyòng.","Phát huy tác dụng."],
+  ["发明","fāmíng","phát minh","động từ",4,"发明了电话。","Fāmíng le diànhuà.","Phát minh ra điện thoại."],
+  ["反对","fǎnduì","phản đối","động từ",4,"我反对。","Wǒ fǎnduì.","Tôi phản đối."],
+  ["反映","fǎnyìng","phản ánh","động từ",4,"反映问题。","Fǎnyìng wèntí.","Phản ánh vấn đề."],
+  ["访问","fǎngwèn","thăm viếng / truy cập","động từ",4,"访问中国。","Fǎngwèn Zhōngguó.","Thăm viếng Trung Quốc."],
+  ["放弃","fàngqì","từ bỏ","động từ",4,"别放弃。","Bié fàngqì.","Đừng từ bỏ."],
+  ["符合","fúhé","phù hợp với","động từ",4,"符合要求。","Fúhé yāoqiú.","Phù hợp yêu cầu."],
+  ["负责","fùzé","chịu trách nhiệm","động từ",4,"负责这个项目。","Fùzé zhège xiàngmù.","Chịu trách nhiệm dự án này."],
+  ["改善","gǎishàn","cải thiện","động từ",4,"改善生活。","Gǎishàn shēnghuó.","Cải thiện cuộc sống."],
+  ["改革","gǎigé","cải cách","động từ",4,"改革开放。","Gǎigé kāifàng.","Cải cách mở cửa."],
+  ["感觉","gǎnjué","cảm giác / cảm thấy","động từ",4,"感觉很好。","Gǎnjué hěn hǎo.","Cảm thấy rất tốt."],
+  ["搞","gǎo","làm (khẩu ngữ)","động từ",4,"搞清楚。","Gǎo qīngchu.","Làm cho rõ ràng."],
+  ["各种","gèzhǒng","đủ thứ / nhiều loại","đại từ",4,"各种水果。","Gèzhǒng shuǐguǒ.","Đủ loại trái cây."],
+  ["根据","gēnjù","dựa trên / theo","giới từ",4,"根据规定。","Gēnjù guīdìng.","Theo quy định."],
+  ["更加","gèngjiā","càng thêm / hơn nữa","phó từ",4,"更加努力。","Gèngjiā nǔlì.","Càng cố gắng hơn."],
+  ["估计","gūjì","ước lượng / đoán","động từ",4,"估计一下。","Gūjì yīxià.","Ước lượng một chút."],
+  ["固定","gùdìng","cố định","tính từ",4,"固定时间。","Gùdìng shíjiān.","Thời gian cố định."],
+  ["故意","gùyì","cố ý","phó từ",4,"故意的。","Gùyì de.","Cố ý mà."],
+  ["关系","guānxi","quan hệ / liên quan","danh từ",4,"没关系。","Méi guānxi.","Không sao."],
+  ["观察","guānchá","quan sát","động từ",4,"仔细观察。","Zǐxì guānchá.","Quan sát kỹ."],
+  ["观点","guāndiǎn","quan điểm / ý kiến","danh từ",4,"我的观点。","Wǒ de guāndiǎn.","Quan điểm của tôi."],
+  ["管理","guǎnlǐ","quản lý","động từ",4,"管理公司。","Guǎnlǐ gōngsī.","Quản lý công ty."],
+  ["广泛","guǎngfàn","rộng rãi / phổ biến","tính từ",4,"广泛使用。","Guǎngfàn shǐyòng.","Sử dụng rộng rãi."],
+  ["规定","guīdìng","quy định","danh từ",4,"学校规定。","Xuéxiào guīdìng.","Quy định của trường."],
+  ["过去","guòqù","quá khứ / đi qua","danh từ",4,"过去的事。","Guòqù de shì.","Việc quá khứ."],
+  ["好像","hǎoxiàng","dường như / giống như","phó từ",4,"好像下雨了。","Hǎoxiàng xiàyǔ le.","Dường như mưa rồi."],
+  ["恢复","huīfù","phục hồi / lấy lại","động từ",4,"恢复健康。","Huīfù jiànkāng.","Phục hồi sức khỏe."],
+  ["获得","huòdé","đạt được / giành được","động từ",4,"获得成功。","Huòdé chénggōng.","Đạt được thành công."],
+  ["几乎","jīhū","gần như / hầu như","phó từ",4,"几乎忘了。","Jīhū wàng le.","Gần như quên rồi."],
+  ["基本","jīběn","cơ bản","tính từ",4,"基本完成。","Jīběn wánchéng.","Cơ bản hoàn thành."],
+  ["及时","jíshí","kịp thời","tính từ",4,"及时处理。","Jíshí chǔlǐ.","Xử lý kịp thời."],
+  ["即使","jíshǐ","ngay cả khi / dù cho","liên từ",4,"即使下雨也要去。","Jíshǐ xiàyǔ yě yào qù.","Dù mưa cũng phải đi."],
+  ["计算","jìsuàn","tính toán","động từ",4,"计算一下。","Jìsuàn yīxià.","Tính toán một chút."],
+  ["既然","jìrán","vì thế thì / đã vậy","liên từ",4,"既然这样。","Jìrán zhèyàng.","Đã vậy thì."],
+  ["加强","jiāqiáng","tăng cường / mạnh thêm","động từ",4,"加强管理。","Jiāqiáng guǎnlǐ.","Tăng cường quản lý."],
+  ["假如","jiǎrú","nếu như / giả sử","liên từ",4,"假如我是你。","Jiǎrú wǒ shì nǐ.","Nếu tôi là bạn."],
+  ["坚持","jiānchí","kiên trì","động từ",4,"坚持到底。","Jiānchí dàodǐ.","Kiên trì đến cùng."],
+  ["检查","jiǎnchá","kiểm tra / rà soát","động từ",4,"检查作业。","Jiǎnchá zuòyè.","Kiểm tra bài tập."],
+  ["减少","jiǎnshǎo","giảm bớt","động từ",4,"减少污染。","Jiǎnshǎo wūrǎn.","Giảm ô nhiễm."],
+  ["建立","jiànlì","thiết lập / lập ra","động từ",4,"建立关系。","Jiànlì guānxi.","Thiết lập quan hệ."],
+  ["建设","jiànshè","xây dựng","động từ",4,"建设国家。","Jiànshè guójiā.","Xây dựng đất nước."],
+  ["降低","jiàngdī","hạ thấp / giảm","động từ",4,"降低成本。","Jiàngdī chéngběn.","Giảm chi phí."],
+  ["交流","jiāoliú","giao lưu / trao đổi","động từ",4,"交流经验。","Jiāoliú jīngyàn.","Giao lưu kinh nghiệm."],
+  ["教育","jiàoyù","giáo dục","danh từ",4,"教育孩子。","Jiàoyù háizi.","Giáo dục con cái."],
+  ["解决","jiějué","giải quyết","động từ",4,"解决问题。","Jiějué wèntí.","Giải quyết vấn đề."],
+  ["进行","jìnxíng","tiến hành / diễn ra","động từ",4,"进行讨论。","Jìnxíng tǎolùn.","Tiến hành thảo luận."],
+  ["禁止","jìnzhǐ","cấm / nghiêm cấm","động từ",4,"禁止吸烟。","Jìnzhǐ xīyān.","Cấm hút thuốc."],
+  ["经历","jīnglì","trải qua / trải nghiệm","động từ",4,"经历很多。","Jīnglì hěn duō.","Trải qua nhiều."],
+  ["经验","jīngyàn","kinh nghiệm","danh từ",4,"有经验。","Yǒu jīngyàn.","Có kinh nghiệm."],
+  ["举行","jǔxíng","tổ chức (diễn ra)","động từ",4,"举行会议。","Jǔxíng huìyì.","Tổ chức hội nghị."],
+  ["考虑","kǎolǜ","cân nhắc / suy nghĩ","động từ",4,"考虑一下。","Kǎolǜ yīxià.","Cân nhắc một chút."],
+  ["可是","kěshì","nhưng / tuy nhiên","liên từ",4,"很好，可是太贵。","Hěn hǎo, kěshì tài guì.","Tốt nhưng quá đắt."],
+  ["可惜","kěxī","đáng tiếc","tính từ",4,"真可惜。","Zhēn kěxī.","Thật đáng tiếc."],
+  ["控制","kòngzhì","kiểm soát / điều khiển","động từ",4,"控制情绪。","Kòngzhì qíngxù.","Kiểm soát cảm xúc."],
+  ["联系","liánxì","liên lạc / liên hệ","động từ",4,"保持联系。","Bǎochí liánxì.","Giữ liên lạc."],
+  ["了解","liǎojiě","hiểu rõ / tìm hiểu","động từ",4,"了解情况。","Liǎojiě qíngkuàng.","Hiểu rõ tình hình."],
+  ["满足","mǎnzú","thỏa mãn / làm hài lòng","động từ",4,"满足要求。","Mǎnzú yāoqiú.","Thỏa mãn yêu cầu."],
+  ["面对","miànduì","đối mặt với","động từ",4,"面对困难。","Miànduì kùnnan.","Đối mặt với khó khăn."],
+  ["明显","míngxiǎn","rõ ràng / hiển nhiên","tính từ",4,"很明显。","Hěn míngxiǎn.","Rất rõ ràng."],
+  ["目前","mùqián","hiện tại / trước mắt","danh từ",4,"目前很好。","Mùqián hěn hǎo.","Hiện tại rất tốt."],
+  ["判断","pànduàn","phán đoán / đánh giá","động từ",4,"判断对错。","Pànduàn duìcuò.","Phán đoán đúng sai."],
+  ["批评","pīpíng","phê bình","động từ",4,"受到批评。","Shòudào pīpíng.","Bị phê bình."],
+  ["破坏","pòhuài","phá hoại / hủy hoại","động từ",4,"破坏环境。","Pòhuài huánjìng.","Phá hoại môi trường."],
+  ["期待","qīdài","mong đợi / trông đợi","động từ",4,"期待你的到来。","Qīdài nǐ de dàolái.","Mong đợi bạn đến."],
+  ["强调","qiángdiào","nhấn mạnh","động từ",4,"强调重点。","Qiángdiào zhòngdiǎn.","Nhấn mạnh điểm chính."],
+  ["取得","qǔdé","đạt được / giành được","động từ",4,"取得进步。","Qǔdé jìnbù.","Đạt được tiến bộ."],
+  ["认为","rènwéi","cho rằng / nghĩ rằng","động từ",4,"我认为很好。","Wǒ rènwéi hěn hǎo.","Tôi cho rằng rất tốt."],
+  ["任何","rènhé","bất kỳ / bất cứ","đại từ",4,"任何人。","Rènhé rén.","Bất kỳ ai."],
+  ["深入","shēnrù","sâu sắc / đi sâu","tính từ",4,"深入了解。","Shēnrù liǎojiě.","Tìm hiểu sâu."],
+  ["甚至","shènzhì","thậm chí","phó từ",4,"甚至不知道。","Shènzhì bù zhīdào.","Thậm chí không biết."],
+  ["始终","shǐzhōng","luôn luôn / nhất quán","phó từ",4,"始终如一。","Shǐzhōng rúyī.","Nhất quán."],
+  ["适应","shìyìng","thích nghi","động từ",4,"适应环境。","Shìyìng huánjìng.","Thích nghi với môi trường."],
+  ["受到","shòudào","nhận được / bị","động từ",4,"受到欢迎。","Shòudào huānyíng.","Được chào đón."],
+  ["首先","shǒuxiān","trước hết / đầu tiên","phó từ",4,"首先，谢谢你。","Shǒuxiān, xièxie nǐ.","Đầu tiên, cảm ơn bạn."],
+  ["属于","shǔyú","thuộc về","động từ",4,"属于我。","Shǔyú wǒ.","Thuộc về tôi."],
+  ["条件","tiáojiàn","điều kiện","danh từ",4,"条件很好。","Tiáojiàn hěn hǎo.","Điều kiện rất tốt."],
+  ["同时","tóngshí","đồng thời / cùng lúc","phó từ",4,"同时进行。","Tóngshí jìnxíng.","Tiến hành đồng thời."],
+  ["未必","wèibì","không hẳn là / chưa chắc","phó từ",4,"未必如此。","Wèibì rúcǐ.","Không hẳn vậy."],
+  ["文化","wénhuà","văn hóa","danh từ",4,"中国文化。","Zhōngguó wénhuà.","Văn hóa Trung Quốc."],
+  ["显然","xiǎnrán","rõ ràng là","phó từ",4,"显然不对。","Xiǎnrán bú duì.","Rõ ràng là sai."],
+  ["现象","xiànxiàng","hiện tượng","danh từ",4,"自然现象。","Zìrán xiànxiàng.","Hiện tượng tự nhiên."],
+  ["相对","xiāngduì","tương đối / đối lập","tính từ",4,"相对来说。","Xiāngduì láishuō.","Tương đối mà nói."],
+  ["相信","xiāngxìn","tin tưởng / tin rằng","động từ",4,"相信自己。","Xiāngxìn zìjǐ.","Tin vào bản thân."],
+  ["相似","xiāngsì","tương tự / giống nhau","tính từ",4,"很相似。","Hěn xiāngsì.","Rất giống nhau."],
+  ["效果","xiàoguǒ","hiệu quả / kết quả","danh từ",4,"效果很好。","Xiàoguǒ hěn hǎo.","Hiệu quả rất tốt."],
+  ["一般","yìbān","thông thường / nói chung","tính từ",4,"一般来说。","Yìbān láishuō.","Nói chung."],
+  ["以来","yǐlái","từ khi (cho đến nay)","liên từ",4,"自古以来。","Zìgǔ yǐlái.","Từ xưa đến nay."],
+  ["以为","yǐwéi","tưởng (nhầm)","động từ",4,"我以为你不来了。","Wǒ yǐwéi nǐ bù lái le.","Tôi tưởng bạn không đến."],
+  ["因此","yīncǐ","vì thế / do đó","liên từ",4,"因此成功了。","Yīncǐ chénggōng le.","Vì thế mà thành công."],
+  ["永远","yǒngyuǎn","mãi mãi / vĩnh viễn","phó từ",4,"永远记住。","Yǒngyuǎn jìzhù.","Ghi nhớ mãi."],
+  ["由于","yóuyú","do / bởi vì","liên từ",4,"由于下雨。","Yóuyú xiàyǔ.","Do trời mưa."],
+  ["于是","yúshì","vì thế nên / bèn","liên từ",4,"于是他走了。","Yúshì tā zǒu le.","Vì thế ấý đi rồi."],
+  ["遇到","yùdào","gặp phải / gặp được","động từ",4,"遇到困难。","Yùdào kùnnan.","Gặp khó khăn."],
+  ["愿意","yuànyì","sẵn lòng / đồng ý","động từ",4,"我愿意。","Wǒ yuànyì.","Tôi sẵn lòng."],
+  ["允许","yǔnxǔ","cho phép / phép","động từ",4,"允许吗？","Yǔnxǔ ma?","Có được phép không?"],
+  ["暂时","zànshí","tạm thời / nhất thời","phó từ",4,"暂时的。","Zànshí de.","Tạm thời thôi."],
+  ["怎样","zěnyàng","thế nào / như thế nào","đại từ",4,"怎么样？","Zěnyàng?","Thế nào?"],
+  ["正好","zhènghǎo","vừa đúng / đúng lúc","phó từ",4,"正好合适。","Zhènghǎo héshì.","Vừa vặn."],
+  ["直接","zhíjiē","trực tiếp","tính từ",4,"直接说。","Zhíjiē shuō.","Nói thẳng."],
+  ["值得","zhídé","đáng giá / đáng để","động từ",4,"值得学习。","Zhídé xuéxí.","Đáng để học."],
+  ["只要","zhǐyào","miễn là / chỉ cần","liên từ",4,"只要努力。","Zhǐyào nǔlì.","Chỉ cần cố gắng."],
+  ["至少","zhìshǎo","ít nhất","phó từ",4,"至少三天。","Zhìshǎo sān tiān.","Ít nhất ba ngày."],
+  ["主要","zhǔyào","chủ yếu / chính","tính từ",4,"主要原因。","Zhǔyào yuányīn.","Nguyên nhân chính."],
+  ["准确","zhǔnquè","chính xác","tính từ",4,"回答准确。","Huídá zhǔnquè.","Trả lời chính xác."],
+  ["自己","zìjǐ","bản thân / tự mình","đại từ",4,"自己做。","Zìjǐ zuò.","Tự mình làm."],
+  ["总共","zǒnggòng","tổng cộng","phó từ",4,"总共一百块。","Zǒnggòng yìbǎi kuài.","Tổng cộng một trăm đồng."],
+  ["最后","zuìhòu","cuối cùng","phó từ",4,"最后，谢谢你。","Zuìhòu, xièxie nǐ.","Cuối cùng, cảm ơn bạn."],
+  ["作为","zuòwéi","với tư cách là / làm cho","giới từ",4,"作为学生。","Zuòwéi xuésheng.","Là một học sinh."],
+  ["安全","ānquán","an toàn","tính từ",4,"注意安全。","Zhùyì ānquán.","Chú ý an toàn."],
+  ["按照","ànzhào","theo / dựa trên","giới từ",4,"按照规定。","Ànzhào guīdìng.","Theo quy định."],
+  ["把握","bǎwò","nắm vững / sự chắc chắn","động từ",4,"有把握。","Yǒu bǎwò.","Có sự chắc chắn."],
+  ["报名","bàomíng","đăng ký","động từ",4,"报名参加。","Bàomíng cānjiā.","Đăng ký tham gia."],
+  ["抱歉","bàoqiàn","xin lỗi / lấy làm tiếc","tính từ",4,"很抱歉。","Hěn bàoqiàn.","Rất xin lỗi."],
+  ["北方","běifāng","phương Bắc","danh từ",4,"北方很冷。","Běifāng hěn lěng.","Phương Bắc rất lạnh."],
+  ["本来","běnlái","vốn dĩ / gốc rễ","phó từ",4,"本来就是。","Běnlái jiù shì.","Vốn dĩ là vậy."],
+  ["比如","bǐrú","ví dụ như","phó từ",4,"比如苹果。","Bǐrú píngguǒ.","Ví dụ như quả táo."],
+  ["笔记","bǐjì","ghi chép / bút ký","danh từ",4,"做笔记。","Zuò bǐjì.","Làm ghi chép."],
+  ["毕竟","bìjìng","rốt cuộc / sau tất cả","phó từ",4,"毕竟是朋友。","Bìjìng shì péngyou.","Rốt cuộc là bạn bè."],
+  ["避免","bìmiǎn","tránh khỏi","động từ",4,"避免错误。","Bìmiǎn cuòwù.","Tránh sai lầm."],
+  ["变化","biànhuà","sự thay đổi / biến hóa","danh từ",4,"变化很大。","Biànhuà hěn dà.","Thay đổi rất lớn."],
+  ["表扬","biǎoyáng","khen ngợi","động từ",4,"表扬他。","Biǎoyáng tā.","Khen ngợi ấý."],
+  ["别人","biérén","người khác","danh từ",4,"别管别人。","Bié guǎn biérén.","Đừng bận tâm người khác."],
+  ["并且","bìngqiě","và / hơn nữa","liên từ",4,"并且很好。","Bìngqiě hěn hǎo.","Và rất tốt."],
+  ["补充","bǔchōng","bổ sung","động từ",4,"补充一下。","Bǔchōng yīxià.","Bổ sung một chút."],
+  ["部门","bùmén","bộ phận / ngành","danh từ",4,"这个部门。","Zhège bùmén.","Bộ phận này."],
+  ["才能","cáinéng","tài năng / khả năng","danh từ",4,"有才能。","Yǒu cáinéng.","Có tài năng."],
+  ["材料","cáiliào","tài liệu / vật liệu","danh từ",4,"准备材料。","Zhǔnbèi cáiliào.","Chuẩn bị tài liệu."],
+  ["差","chà","kém / lệch","tính từ",4,"成绩差。","Chéngjì chà.","Điểm kém."],
+  ["差不多","chàbuduō","gần như / xấp xỉ","phó từ",4,"差不多了。","Chàbuduō le.","Gần xong rồi."],
+  ["产品","chǎnpǐn","sản phẩm","danh từ",4,"新产品。","Xīn chǎnpǐn.","Sản phẩm mới."],
+  ["尝","cháng","nếm thử","động từ",4,"尝一下。","Cháng yīxià.","Nếm thử một chút."],
+  ["成立","chénglì","thành lập","động từ",4,"公司成立了。","Gōngsī chénglì le.","Công ty đã thành lập."],
+  ["程度","chéngdù","mức độ / trình độ","danh từ",4,"程度很高。","Chéngdù hěn gāo.","Trình độ rất cao."],
+  ["吃惊","chījīng","ngạc nhiên","tính từ",4,"很吃惊。","Hěn chījīng.","Rất ngạc nhiên."],
+  ["重新","chóngxīn","lại từ đầu / một lần nữa","phó từ",4,"重新开始。","Chóngxīn kāishǐ.","Bắt đầu lại."],
+  ["出发","chūfā","khởi hành","động từ",4,"八点出发。","Bā diǎn chūfā.","Khởi hành lúc 8 giờ."],
+  ["传说","chuánshuō","truyền thuyết","danh từ",4,"古老的传说。","Gǔlǎo de chuánshuō.","Truyền thuyết cổ xưa."],
+  ["从此","cóngcǐ","từ đó trở đi","phó từ",4,"从此幸福。","Cóngcǐ xìngfú.","Từ đó hạnh phúc."],
+  ["从而","cóng'ér","do đó / từ đó mà","liên từ",4,"从而成功。","Cóng'ér chénggōng.","Do đó thành công."],
+  ["促进","cùjìn","thúc đẩy","động từ",4,"促进发展。","Cùjìn fāzhǎn.","Thúc đẩy phát triển."],
+  ["村","cūn","làng / thôn","danh từ",4,"一个村子。","Yīge cūnzi.","Một ngôi làng."],
+  ["错误","cuòwù","sai lầm / lỗi","danh từ",4,"犯错误。","Fàn cuòwù.","Phạm sai lầm."],
+  ["答案","dá'àn","đáp án","danh từ",4,"正确答案。","Zhèngquè dá'àn.","Đáp án đúng."],
+  ["打扮","dǎban","ăn mặc / trang điểm","động từ",4,"打扮漂亮。","Dǎban piàoliang.","Ăn mặc đẹp."],
+  ["大胆","dàdǎn","táo bạo / dũng cảm","tính từ",4,"大胆尝试。","Dàdǎn chángshì.","Dũng cảm thử."],
+  ["大家","dàjiā","mọi người","danh từ",4,"大家好。","Dàjiā hǎo.","Chào mọi người."],
+  ["大约","dàyuē","khoảng / chừng","phó từ",4,"大约十点。","Dàyuē shí diǎn.","Khoảng mười giờ."],
+  ["带","dài","mang theo / dẫn","động từ",4,"带伞。","Dài sǎn.","Mang theo ô."],
+  ["当地","dāngdì","địa phương / tại chỗ","danh từ",4,"当地人。","Dāngdì rén.","Người địa phương."],
+  ["到处","dàochù","khắp nơi / ở đâu cũng","phó từ",4,"到处都是。","Dàochù dōu shì.","Khắp nơi đều có."],
+  ["道歉","dàoqiàn","xin lỗi (trang trọng)","động từ",4,"向他道歉。","Xiàng tā dàoqiàn.","Xin lỗi ấý."],
+  ["低","dī","thấp / thấp xuống","tính từ",4,"声音很低。","Shēngyīn hěn dī.","Giọng rất thấp."],
+  ["的确","díquè","quả thật / thực sự","phó từ",4,"的确很好。","Díquè hěn hǎo.","Quả thật rất tốt."],
+  ["掉","diào","rơi / đánh rơi","động từ",4,"掉了。","Diào le.","Rơi rồi."],
+  ["东","dōng","đông (phương)","danh từ",4,"东方。","Dōngfāng.","Phương Đông."],
+  ["动","dòng","động / chuyển động","động từ",4,"别动。","Bié dòng.","Đừng động."],
+  ["动物","dòngwù","động vật","danh từ",4,"喜欢动物。","Xǐhuan dòngwù.","Thích động vật."],
+  ["段","duàn","đoạn / khúc","lượng từ",4,"一段话。","Yīduàn huà.","Một đoạn nói."],
+  ["断","duàn","đứt / ngắt","động từ",4,"线断了。","Xiàn duàn le.","Sợi dây đứt rồi."],
+  ["对方","duìfāng","đối phương / bên kia","danh từ",4,"对方很好。","Duìfāng hěn hǎo.","Đối phương rất tốt."],
+  ["吨","dūn","tấn","lượng từ",4,"一吨煤。","Yī dūn méi.","Một tấn than."],
+  ["多么","duōme","biết bao / làm sao","phó từ",4,"多么美丽。","Duōme měilì.","Đẹp biết bao."],
+  ["而且","érqiě","hơn nữa / và","liên từ",4,"而且便宜。","Érqiě piányi.","Hơn nữa còn rẻ."],
+  ["发表","fābiǎo","phát biểu / công bố","động từ",4,"发表文章。","Fābiǎo wénzhāng.","Công bố bài viết."],
+  ["发达","fādá","phát đạt","tính từ",4,"经济发达。","Jīngjì fādá.","Kinh tế phát đạt."],
+  ["法","fǎ","pháp luật / phương pháp","danh từ",4,"没有办法。","Méiyǒu bànfǎ.","Không có cách nào."],
+  ["法律","fǎlǜ","luật pháp","danh từ",4,"遵守法律。","Zūnshǒu fǎlǜ.","Tuân thủ luật pháp."],
+  ["翻","fān","lật / dịch","động từ",4,"翻书。","Fān shū.","Lật sách."],
+  ["翻译","fānyì","dịch / phiên dịch","động từ",4,"翻译中文。","Fānyì Zhōngwén.","Dịch tiếng Trung."],
+  ["范围","fànwéi","phạm vi","danh từ",4,"范围很广。","Fànwéi hěn guǎng.","Phạm vi rất rộng."],
+  ["方法","fāngfǎ","phương pháp / cách làm","danh từ",4,"好方法。","Hǎo fāngfǎ.","Phương pháp tốt."],
+  ["方面","fāngmiàn","phương diện / mặt","danh từ",4,"这方面。","Zhè fāngmiàn.","Về mặt này."],
+  ["放","fàng","đặt / thả / bật","động từ",4,"放桌子上。","Fàng zhuōzi shàng.","Đặt lên bàn."],
+  ["分别","fēnbié","lần lượt / phân biệt","động từ",4,"分别处理。","Fēnbié chǔlǐ.","Xử lý lần lượt."],
+  ["分配","fēnpèi","phân phối / chia sẻ","động từ",4,"分配任务。","Fēnpèi rènwu.","Phân phối nhiệm vụ."],
+  ["分析","fēnxī","phân tích","động từ",4,"分析问题。","Fēnxī wèntí.","Phân tích vấn đề."],
+  ["丰富","fēngfù","phong phú","tính từ",4,"经验丰富。","Jīngyàn fēngfù.","Kinh nghiệm phong phú."],
+  ["封","fēng","phong / bức (thư)","lượng từ",4,"一封信。","Yī fēng xìn.","Một bức thư."],
+  ["服务","fúwù","phục vụ","động từ",4,"服务很好。","Fúwù hěn hǎo.","Phục vụ rất tốt."],
+  ["父亲","fùqīn","cha (trang trọng)","danh từ",4,"我的父亲。","Wǒ de fùqīn.","Cha của tôi."],
+  ["该","gāi","đáng lẽ / phải / nên","động từ",4,"该走了。","Gāi zǒu le.","Đến lúc đi rồi."],
+  ["改","gǎi","sửa / đổi / cải","động từ",4,"改一下。","Gǎi yīxià.","Sửa một chút."],
+  ["干脆","gāncuì","thẳng thắn / luôn thì","phó từ",4,"干脆走吧。","Gāncuì zǒu ba.","Luôn thì đi thôi."],
+  ["刚","gāng","vừa mới","phó từ",4,"刚来。","Gāng lái.","Vừa mới đến."],
+  ["歌","gē","bài hát / ca","danh từ",4,"一首歌。","Yī shǒu gē.","Một bài hát."],
+  ["各","gè","từng / mỗi","đại từ",4,"各位好。","Gèwèi hǎo.","Chào quý vị."],
+  ["工业","gōngyè","công nghiệp","danh từ",4,"工业发达。","Gōngyè fādá.","Công nghiệp phát đạt."],
+  ["共同","gòngtóng","chung / cùng nhau","tính từ",4,"共同努力。","Gòngtóng nǔlì.","Cùng nhau cố gắng."],
+  ["够","gòu","đủ / đủ sức","động từ",4,"钱够了。","Qián gòu le.","Tiền đủ rồi."],
+  ["姑娘","gūniang","cô gái / cô nương","danh từ",4,"年轻姑娘。","Niánqīng gūniang.","Cô gái trẻ."],
+  ["挂","guà","treo / ngắt máy","động từ",4,"挂电话。","Guà diànhuà.","Ngắt máy."],
+  ["官","guān","quan chức / viên chức","danh từ",4,"当官。","Dāng guān.","Làm quan."],
+  ["光","guāng","ánh sáng / chỉ có","danh từ",4,"阳光很好。","Yángguāng hěn hǎo.","Ánh nắng tốt."],
+  ["国际","guójì","quốc tế","danh từ",4,"国际贸易。","Guójì màoyì.","Thương mại quốc tế."],
+  ["过程","guòchéng","quá trình","danh từ",4,"学习过程。","Xuéxí guòchéng.","Quá trình học."],
+  ["害羞","hàixiū","ngại ngùng / xấu hổ","tính từ",4,"别害羞。","Bié hàixiū.","Đừng ngại ngùng."],
+  ["寒假","hánjià","kỳ nghỉ đông","danh từ",4,"寒假快乐。","Hánjià kuàilè.","Nghỉ đông vui vẻ."],
+  ["好处","hǎochù","lợi ích / điều tốt","danh từ",4,"有很多好处。","Yǒu hěnduō hǎochù.","Có nhiều lợi ích."],
+  ["合格","hégé","đạt chuẩn / hợp lệ","tính từ",4,"考试合格。","Kǎoshì hégé.","Thi đạt chuẩn."],
+  ["合适","héshì","vừa vặn / hợp lý","tính từ",4,"很合适。","Hěn héshì.","Rất vừa vặn."],
+  ["黑板","hēibǎn","bảng đen","danh từ",4,"看黑板。","Kàn hēibǎn.","Nhìn bảng đen."],
+  ["后来","hòulái","sau đó / về sau","danh từ",4,"后来呢？","Hòulái ne?","Sau đó thì sao?"],
+  ["忽然","hūrán","đột nhiên / bỗng dưng","phó từ",4,"忽然下雨了。","Hūrán xiàyǔ le.","Bỗng dưng mưa."],
+  ["互相","hùxiāng","lẫn nhau / tương hỗ","phó từ",4,"互相帮助。","Hùxiāng bāngzhù.","Giúp đỡ lẫn nhau."],
+  ["画","huà","vẽ / bức tranh","động từ",4,"画一幅画。","Huà yī fú huà.","Vẽ một bức tranh."],
+  ["坏","huài","hỏng / xấu","tính từ",4,"坏了。","Huài le.","Hỏng rồi."],
+  ["回忆","huíyì","hồi tưởng / nhớ lại","động từ",4,"回忆过去。","Huíyì guòqù.","Nhớ lại quá khứ."],
+  ["活","huó","sống / hoạt động","động từ",4,"快乐地活。","Kuàilè de huó.","Sống vui vẻ."],
+  ["活动","huódòng","hoạt động","danh từ",4,"参加活动。","Cānjiā huódòng.","Tham gia hoạt động."],
+  ["活泼","huópō","hoạt bát / năng động","tính từ",4,"孩子很活泼。","Háizi hěn huópō.","Đứa trẻ rất hoạt bát."],
+  ["火","huǒ","lửa","danh từ",4,"火很大。","Huǒ hěn dà.","Lửa rất lớn."],
+  ["基础","jīchǔ","nền tảng / cơ sở","danh từ",4,"基础很好。","Jīchǔ hěn hǎo.","Nền tảng tốt."],
+  ["激动","jīdòng","xúc động / phấn khích","tính từ",4,"很激动。","Hěn jīdòng.","Rất xúc động."],
+  ["极","jí","cực kỳ / cực điểm","phó từ",4,"极好。","Jí hǎo.","Tuyệt vời cực kỳ."],
+  ["记","jì","ghi nhớ / ghi chép","động từ",4,"记住。","Jìzhù.","Ghi nhớ."],
+  ["记录","jìlù","ghi lại / hồ sơ","động từ",4,"记录下来。","Jìlù xiàlái.","Ghi lại."],
+  ["纪念","jìniàn","kỷ niệm","động từ",4,"纪念一下。","Jìniàn yīxià.","Kỷ niệm một chút."],
+  ["技术","jìshù","kỹ thuật","danh từ",4,"技术很高。","Jìshù hěn gāo.","Kỹ thuật cao."],
+  ["寄","jì","gửi (thư / bưu phẩm)","động từ",4,"寄信。","Jì xìn.","Gửi thư."],
+  ["加","jiā","thêm / cộng","động từ",4,"加油。","Jiāyóu.","Cố lên!"],
+  ["假","jià","kỳ nghỉ / ngày nghỉ","danh từ",4,"放假了。","Fàngjià le.","Nghỉ học rồi."],
+  ["见面","jiànmiàn","gặp mặt / gặp gỡ","động từ",4,"明天见面。","Míngtiān jiànmiàn.","Ngày mai gặp mặt."],
+  ["件","jiàn","kiện / món (đồ vật)","lượng từ",4,"一件衣服。","Yī jiàn yīfu.","Một bộ quần áo."]
+  ];
+
+  var TM={吗:"嗎",们:"們",这:"這",么:"麼",时:"時",间:"間",学:"學",医:"醫",师:"師",电:"電",话:"話",机:"機",饭:"飯",鸡:"雞",鱼:"魚",苹:"蘋",面:"麵",条:"條",贵:"貴",旧:"舊",爱:"愛",来:"來",听:"聽",说:"說",读:"讀",写:"寫",银:"銀",车:"車",飞:"飛",个:"個",从:"從",对:"對",关:"關",谢:"謝",见:"見",没:"沒",为:"為",国:"國",语:"語",汉:"漢",买:"買",卖:"賣",钱:"錢",块:"塊",认:"認",识:"識",饮:"飲",现:"現",点:"點",觉:"覺",应:"應",该:"該",还:"還",进:"進",让:"讓",给:"給",过:"過",岁:"歲",张:"張",东:"東",长:"長",门:"門",问:"問",开:"開",马:"馬",么:"麼"};
+  function trad(h){var o="";for(var i=0;i<h.length;i++){var c=h[i];o+=TM[c]||c;}return o;}
+  function strip(s){return (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ü/g,"v").replace(/\s+/g,"").toLowerCase();}
+
+  var FAVS={};
+  try{FAVS=JSON.parse(localStorage.getItem("hantudian_favs")||"{}");}catch(e){FAVS={};}
+  function saveFavs(){try{localStorage.setItem("hantudian_favs",JSON.stringify(FAVS));}catch(e){}}
+  function isFav(h){return !!FAVS[h];}
+  function toggleFav(h){if(FAVS[h])delete FAVS[h];else FAVS[h]=1;saveFavs();updateFavCount();}
+  function favCount(){var n=0;for(var k in FAVS)n++;return n;}
+  function updateFavCount(){var el=document.getElementById("favcount");if(el)el.textContent=favCount();}
+
+  function speak(text){try{if(!window.speechSynthesis)return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang="zh-CN";u.rate=0.85;window.speechSynthesis.speak(u);}catch(e){}}
+
+  var hsk1=D.filter(function(d){return d[4]===1;}).length;
+  var hsk2=D.filter(function(d){return d[4]===2;}).length;
+  document.getElementById("statrow").innerHTML=
+    '<span style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--text);"><span style="color:var(--accent);">'+D.length+'</span> từ vựng</span>'+
+    '<span style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--text);"><span style="color:var(--accent);">'+hsk1+'</span> HSK 1</span>'+
+    '<span style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--text);"><span style="color:var(--accent2);">'+hsk2+'</span> HSK 2</span>'+
+    '<span style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--text);">Phát âm <span style="color:var(--accent);">trực tiếp</span></span>';
+
+  var tabs=document.querySelectorAll(".tabbtn");
+  var panels={dict:document.getElementById("tab-dict"),flash:document.getElementById("tab-flash"),quiz:document.getElementById("tab-quiz"),fav:document.getElementById("tab-fav")};
+  tabs.forEach(function(b){b.addEventListener("click",function(){
+    tabs.forEach(function(x){x.classList.remove("on");});
+    b.classList.add("on");
+    var t=b.dataset.tab;
+    for(var k in panels)panels[k].style.display=(k===t)?"block":"none";
+    if(t==="fav")renderFavs();
+    if(t==="flash")renderFlash();
+    if(t==="quiz"&&!quizStarted)startQuiz();
+  });});
+
+  var curHsk=0,curQ="";
+  var resultsEl=document.getElementById("results");
+  var noresEl=document.getElementById("noresult");
+  var countEl=document.getElementById("resultcount");
+
+  function cardHTML(d){
+    var h=d[0],p=d[1],v=d[2],g=d[3],l=d[4],ez=d[5],ep=d[6],ev=d[7];
+    var t=trad(h);
+    var fav=isFav(h);
+    var exHTML=(ez)?'<div style="margin-top:10px;padding:8px 10px;border-left:3px solid var(--accent2);background:var(--accent2-soft);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.6;">'+
+      '<div class="han" style="font-weight:700;color:var(--text);">'+ez+'</div>'+
+      '<div style="color:var(--accent);font-size:12px;">'+ep+'</div>'+
+      '<div style="color:var(--muted);">'+ev+'</div></div>':'';
+    return '<div class="wcard rounded-xl p-4" style="background:var(--card);border:1px solid var(--border);position:relative;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">'+
+        '<div style="min-width:0;">'+
+          '<div class="han" style="font-size:30px;font-weight:900;line-height:1.15;color:var(--text);word-break:break-all;">'+h+'</div>'+
+          (t!==h?'<div class="han" style="font-size:13px;color:var(--muted);margin-top:2px;">Phồn thể: '+t+'</div>':'')+
+        '</div>'+
+        '<div style="display:flex;gap:4px;flex-shrink:0;">'+
+          '<button class="spkbtn" data-speak="'+h+'" title="Nghe phát âm" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--accent);min-width:36px;min-height:36px;padding:0;">'+
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>'+
+          '<button class="starbtn" data-fav="'+h+'" title="Yêu thích" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;color:'+(fav?'var(--accent2)':'var(--muted)')+';font-size:16px;min-width:36px;min-height:36px;padding:0;">'+(fav?'★':'☆')+'</button>'+
+        '</div>'+
+      '</div>'+
+      '<div style="font-size:17px;color:var(--accent);font-weight:600;margin-top:6px;">'+p+'</div>'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;">'+
+        '<span style="background:var(--accent-soft);color:var(--text);border:1px solid var(--accent);padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600;">'+g+'</span>'+
+        '<span style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600;">HSK '+l+'</span>'+
+      '</div>'+
+      '<div style="font-size:16px;font-weight:700;color:var(--text);margin-top:8px;line-height:1.4;">'+v+'</div>'+
+      exHTML+
+    '</div>';
+  }
+
+  function renderResults(){
+    var q=strip(curQ);
+    var list=D.filter(function(d){
+      if(curHsk&&d[4]!==curHsk)return false;
+      if(!q)return true;
+      return d[0].indexOf(curQ)>=0||strip(d[1]).indexOf(q)>=0||(d[2]||"").toLowerCase().indexOf(curQ.toLowerCase())>=0||(d[3]||"").toLowerCase().indexOf(curQ.toLowerCase())>=0;
+    });
+    countEl.textContent=list.length+" kết quả";
+    if(list.length===0){resultsEl.innerHTML="";noresEl.style.display="block";return;}
+    noresEl.style.display="none";
+    resultsEl.innerHTML=list.map(cardHTML).join("");
+  }
+  renderResults();
+  updateFavCount();
+
+  document.getElementById("search").addEventListener("input",function(e){
+    curQ=e.target.value.trim();
+    document.getElementById("clearbtn").style.display=curQ?"block":"none";
+    renderResults();
+  });
+  document.getElementById("clearbtn").addEventListener("click",function(){
+    document.getElementById("search").value="";curQ="";this.style.display="none";renderResults();
+  });
+  document.getElementById("hskchips").addEventListener("click",function(e){
+    var c=e.target.closest(".chip");if(!c)return;
+    this.querySelectorAll(".chip").forEach(function(x){x.classList.remove("on");});
+    c.classList.add("on");
+    curHsk=parseInt(c.dataset.hsk);
+    renderResults();
+  });
+
+  document.body.addEventListener("click",function(e){
+    var spk=e.target.closest("[data-speak]");
+    if(spk){speak(spk.dataset.speak);return;}
+    var fav=e.target.closest("[data-fav]");
+    if(fav){toggleFav(fav.dataset.fav);renderResults();if(document.getElementById("tab-fav").style.display==="block")renderFavs();}
+  });
+
+  var fdeck=D.slice(),fidx=0;
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  function renderFlash(){
+    var d=fdeck[fidx%fdeck.length];
+    document.getElementById("fhan").textContent=d[0];
+    document.getElementById("fpin").textContent=d[1];
+    document.getElementById("fvi").textContent=d[2];
+    document.getElementById("fpos").textContent=d[3]+" · HSK "+d[4];
+    document.getElementById("fcounter").textContent=(fidx+1)+" / "+fdeck.length;
+    document.getElementById("fstar").textContent=isFav(d[0])?"★ Đã lưu":"★ Yêu thích";
+    var ex=d[5]?'<div class="han" style="font-weight:700;">'+d[5]+'</div><div style="font-size:13px;opacity:.9;">'+d[6]+'</div><div style="font-size:13px;opacity:.85;">'+d[7]+'</div>':"";
+    document.getElementById("fex").innerHTML=ex;
+    document.getElementById("finner").classList.remove("flipped");
+  }
+  document.getElementById("fcard").addEventListener("click",function(e){
+    if(e.target.closest("#fspeak")||e.target.closest("button"))return;
+    document.getElementById("finner").classList.toggle("flipped");
+  });
+  document.getElementById("fflip").addEventListener("click",function(){document.getElementById("finner").classList.toggle("flipped");});
+  document.getElementById("fnext").addEventListener("click",function(){fidx=(fidx+1)%fdeck.length;renderFlash();});
+  document.getElementById("fprev").addEventListener("click",function(){fidx=(fidx-1+fdeck.length)%fdeck.length;renderFlash();});
+  document.getElementById("fshuffle").addEventListener("click",function(){shuffle(fdeck);fidx=0;renderFlash();});
+  document.getElementById("fspeak").addEventListener("click",function(e){e.stopPropagation();speak(fdeck[fidx%fdeck.length][0]);});
+  document.getElementById("fstar").addEventListener("click",function(e){e.stopPropagation();var d=fdeck[fidx%fdeck.length];toggleFav(d[0]);this.textContent=isFav(d[0])?"★ Đã lưu":"★ Yêu thích";});
+
+  var quizQ=[],qi=0,score=0,quizStarted=false,answered=false;
+  function startQuiz(){
+    quizQ=shuffle(D.slice()).slice(0,10);qi=0;score=0;quizStarted=true;answered=false;
+    document.getElementById("qdone").style.display="none";
+    document.getElementById("qbody").style.display="block";
+    renderQuiz();
+  }
+  function renderQuiz(){
+    if(qi>=quizQ.length){showQuizDone();return;}
+    answered=false;
+    var d=quizQ[qi];
+    document.getElementById("qhan").textContent=d[0];
+    document.getElementById("qpin").textContent=d[1];
+    document.getElementById("qprogress").textContent="Câu "+(qi+1)+" / "+quizQ.length;
+    document.getElementById("qscore").textContent="Điểm: "+score;
+    document.getElementById("qbar").style.width=((qi+1)/quizQ.length*100)+"%";
+    document.getElementById("qfeedback").textContent="";
+    var opts=[d[2]];
+    var pool=D.filter(function(x){return x[2]!==d[2];});
+    shuffle(pool);
+    for(var i=0;i<3&&i<pool.length;i++)opts.push(pool[i][2]);
+    shuffle(opts);
+    var optsEl=document.getElementById("qopts");
+    optsEl.innerHTML="";
+    opts.forEach(function(o){
+      var b=document.createElement("button");
+      b.className="opt px-4 py-3 rounded-xl text-sm sm:text-base font-semibold text-left";
+      b.style.cssText="background:var(--card);border:1.5px solid var(--border);color:var(--text);min-height:48px;cursor:pointer;font-family:inherit;";
+      b.textContent=o;
+      b.addEventListener("click",function(){
+        if(answered)return;answered=true;
+        var fb=document.getElementById("qfeedback");
+        if(o===d[2]){score++;b.classList.add("correct");fb.textContent="✓ Chính xác! "+d[0]+" = "+d[2];fb.style.color="#16a34a";speak(d[0]);}
+        else{b.classList.add("wrong");fb.textContent="✗ Sai. Đáp án: "+d[2];fb.style.color="#dc2626";
+          optsEl.querySelectorAll("button").forEach(function(x){if(x.textContent===d[2])x.classList.add("correct");});}
+        document.getElementById("qscore").textContent="Điểm: "+score;
+        setTimeout(function(){qi++;renderQuiz();},1400);
+      });
+      optsEl.appendChild(b);
+    });
+  }
+  function showQuizDone(){
+    document.getElementById("qbody").style.display="none";
+    var dd=document.getElementById("qdone");dd.style.display="block";
+    var pct=Math.round(score/quizQ.length*100);
+    dd.innerHTML='<div class="rounded-2xl p-8 text-center" style="background:var(--card);border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.06);">'+
+      '<div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Hoàn thành</div>'+
+      '<div style="font-size:56px;font-weight:800;color:var(--accent);line-height:1;">'+score+'<span style="font-size:24px;color:var(--muted);">/'+quizQ.length+'</span></div>'+
+      '<div style="font-size:18px;font-weight:700;margin-top:8px;color:var(--text);">'+(pct>=80?"Tuyệt vời!":pct>=50?"Khá tốt!":"Cố lên, luyện thêm nhé!")+'</div>'+
+      '<div style="color:var(--muted);font-size:14px;margin-top:4px;">Đúng '+pct+'% câu hỏi</div>'+
+      '<button id="qrestart2" class="mt-6 px-8 py-3 rounded-xl font-bold" style="background:var(--accent);color:#fff;border:none;cursor:pointer;min-height:48px;font-size:16px;font-family:inherit;">Làm lại</button></div>';
+    document.getElementById("qrestart2").addEventListener("click",startQuiz);
+  }
+  document.getElementById("qrestart").addEventListener("click",startQuiz);
+
+  function renderFavs(){
+    var list=D.filter(function(d){return isFav(d[0]);});
+    var el=document.getElementById("favlist");
+    var emp=document.getElementById("favempty");
+    if(list.length===0){el.innerHTML="";emp.style.display="block";return;}
+    emp.style.display="none";
+    el.innerHTML=list.map(cardHTML).join("");
+  }
+
+  var toneOpen=true;
+  document.getElementById("tonetoggle").addEventListener("click",function(){
+    toneOpen=!toneOpen;
+    document.getElementById("tonecontent").style.display=toneOpen?"grid":"none";
+    document.getElementById("tonearrow").textContent=toneOpen?"−":"+";
+  });
+
+})();
+</script>
+</body>
+</html>
